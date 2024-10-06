@@ -80,41 +80,46 @@
             </div>
         </div>
     </nav>
-<div class="container">
-    <!-- Filter Section 
-    <div class="filter-section">
-        <input type="text" id="filterUnitName" class="form-control" placeholder="Filter by Unit Name" onkeyup="filterFamilies()">
-    </div> -->
-    <!-- Search Menu -->
-<div class="filter-section">
-    <div class="d-flex align-items-center justify-content-between">
-        <button class="btn btn-primary me-3" type="button" data-bs-toggle="collapse" data-bs-target="#searchOptions" aria-expanded="false" aria-controls="searchOptions">
-            Search Options
-        </button>
-        <div class="collapse show flex-grow-1" id="searchOptions">
-            <div class="row gx-2">
-                <div class="col">
-                    <input type="text" id="firstNameSearch" class="form-control" placeholder="First Name" onkeyup="debouncedFirstNameSearch()">
-                </div>
-                <div class="col">
-                    <input type="text" id="unitNameSearch" class="form-control" placeholder="Unit Name" onkeyup="debouncedUnitNameSearch()">
-                </div>
-                <div class="col">
-                    <input type="text" id="familyNameSearch" class="form-control" placeholder="Family Name" onkeyup="debouncedFamilyNameSearch()">
-                </div>
+    <div class="container">
+        <!-- Unit Name Dropdown -->
+        <div class="form-group">
+            <label for="unitNameDropdown">Select Unit Name:</label>
+            <select id="unitNameDropdown" class="form-control" onchange="filterByUnitName()">
+                <option value="Holy Cross">Holy Cross</option>
+                <option value="St. Jude">St. Jude</option>
+                <option value="St. Alphonsa">St. Alphonsa</option>
+            </select>
+        </div>
+    
+        <!-- Toggle between First Name and Family Name Search -->
+        <div class="form-group">
+            <label>Search By:</label>
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="searchMode" id="firstNameSearchToggle" value="firstName" checked>
+                <label class="form-check-label" for="firstNameSearchToggle">First Name</label>
+            </div>
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="searchMode" id="familyNameSearchToggle" value="familyName">
+                <label class="form-check-label" for="familyNameSearchToggle">Family Name</label>
             </div>
         </div>
+    
+        <!-- Search Bar -->
+        <div class="form-group">
+            <input type="text" id="searchInput" class="form-control" placeholder="Search..." oninput="searchByName()">
+        </div>
+    
+        <!-- Cards Section -->
+        <div class="row" id="family-cards">
+            <!-- Family cards will be rendered here -->
+        </div>
+    
+        <!-- Pagination -->
+        <nav>
+            <ul class="pagination" id="pagination"></ul>
+        </nav>
     </div>
-</div>
-
-
-    <div id="family-cards" class="row"></div>
-
-    <!-- Pagination -->
-    <nav>
-        <ul id="pagination" class="pagination"></ul>
-    </nav>
-</div>
+    
 <!-- Modal for "More Details" -->
 <div class="modal fade" id="familyDetailsModal" tabindex="-1" aria-labelledby="familyDetailsModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
@@ -143,8 +148,10 @@
 <script>
     let families = [];
     let filteredFamilies = [];
+    let filteredByUnit = [];
     const itemsPerPage = 10;
     let currentPage = 1;
+
     // Initialize Firebase
     const firebaseConfig = {
         apiKey: "AIzaSyCOboG8dsoh6MSW3lL_9pY9pB1kUJ35e7U",
@@ -153,44 +160,52 @@
         appId: "1:1088970662172:web:c57adb76c641b1a3749ad9"
     };
 
-    // Initialize Firebase
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
 
     // Check if the user is authenticated
-    firebase.auth().onAuthStateChanged(function(user) {
+    firebase.auth().onAuthStateChanged(function (user) {
         if (user) {
-            // User is authenticated, proceed to fetch Google Sheets data
-            loadClient();
+            // User is authenticated, proceed to load Google Sheets data
+            loadClient();  // Load GAPI client to fetch data
         } else {
             // No user is signed in, redirect to login page
             window.location.href = 'index.html';
         }
     });
 
+    // Load Google API client
     function loadClient() {
-        gapi.load('client', fetchGoogleSheetsData); // Load the Google Sheets API
+        gapi.load('client', initClient);
     }
 
-    function fetchGoogleSheetsData() {
-        const spreadsheetId = '18JSFAA8tDes6PhCWPCpayjMe2PLF40st5BxyOuvUFJo';  // Replace with your Google Sheet ID
-        const range = 'Report!A2:M';  // Adjust the range according to your data
-
+    // Initialize Google Sheets client
+    function initClient() {
         gapi.client.init({
-            'apiKey': 'AIzaSyDoO_nMjQbaUVQgnRCQY9dzMXGw2fnDq_k', // Replace with your Google API Key
-            'discoveryDocs': ["https://sheets.googleapis.com/$discovery/rest?version=v4"]
+            apiKey: 'AIzaSyDoO_nMjQbaUVQgnRCQY9dzMXGw2fnDq_k',  // Replace with your API key
+            discoveryDocs: ["https://sheets.googleapis.com/$discovery/rest?version=v4"]
         }).then(function () {
-            return gapi.client.sheets.spreadsheets.values.get({
-                spreadsheetId: spreadsheetId,
-                range: range,
-            });
+            fetchGoogleSheetsData();
+        }).catch(function (error) {
+            console.log('Error initializing Google Sheets API:', error);
+        });
+    }
+
+    // Fetch data from Google Sheets
+    function fetchGoogleSheetsData() {
+        const spreadsheetId = '18JSFAA8tDes6PhCWPCpayjMe2PLF40st5BxyOuvUFJo';  // Replace with your spreadsheet ID
+        const range = 'Report!A2:M';  // Adjust the range based on your sheet structure
+
+        gapi.client.sheets.spreadsheets.values.get({
+            spreadsheetId: spreadsheetId,
+            range: range,
         }).then(function (response) {
             families = groupByFamilyId(response.result.values);
             filteredFamilies = families;
             renderPagination(filteredFamilies.length);
             displayFamilies();
-        }, function (error) {
-            console.log('Error: ' + error.message);
+        }).catch(function (error) {
+            console.error('Error fetching Google Sheets data:', error);
         });
     }
 
@@ -219,6 +234,39 @@
         return Object.values(groupedFamilies);
     }
 
+    // Function to filter by unit name
+    function filterByUnitName() {
+        const unitNameValue = document.getElementById('unitNameDropdown').value;
+
+        // Filter families based on selected unit name
+        filteredByUnit = families.filter(family => family.unitName === unitNameValue);
+        filteredFamilies = filteredByUnit;
+        currentPage = 1;
+        renderPagination(filteredFamilies.length);
+        displayFamilies();
+    }
+
+    // Function to search by first name or family name based on the toggle selection
+    function searchByName() {
+        const searchValue = document.getElementById('searchInput').value.toLowerCase();
+        const searchMode = document.querySelector('input[name="searchMode"]:checked').value;
+
+        if (searchMode === "firstName") {
+            filteredFamilies = filteredByUnit.filter(family =>
+                family.members.some(member => member.name.toLowerCase().includes(searchValue))
+            );
+        } else if (searchMode === "familyName") {
+            filteredFamilies = filteredByUnit.filter(family =>
+                family.familyName.toLowerCase().includes(searchValue)
+            );
+        }
+
+        currentPage = 1;
+        renderPagination(filteredFamilies.length);
+        displayFamilies();
+    }
+
+    // Function to display families with pagination
     function displayFamilies(page = 1) {
         const startIndex = (page - 1) * itemsPerPage;
         const endIndex = startIndex + itemsPerPage;
@@ -232,10 +280,8 @@
                 <div class="col-md-6">
                     <div class="family-card">
                         <div class="family-header">
-                            <div>
-                                <h5>${family.members[0].name}</h5>
-                                <p>Family: ${family.familyName}</p>
-                            </div>
+                            <h5>${family.members[0].name}</h5>
+                            <p>Family: ${family.familyName}</p>
                         </div>
                         <p><strong>Unit Name:</strong> ${family.unitName}</p>
                         <button class="btn btn-primary" onclick="showFamilyDetails(${filteredFamilies.indexOf(family)})">More Details</button>
@@ -246,65 +292,7 @@
         });
     }
 
-    // Debounce search functions
-    let debounceTimeoutFirstName, debounceTimeoutUnitName, debounceTimeoutFamilyName;
-
-    function debouncedFirstNameSearch() {
-        clearTimeout(debounceTimeoutFirstName);
-        debounceTimeoutFirstName = setTimeout(filterByFirstName, 300);
-    }
-
-    function debouncedUnitNameSearch() {
-        clearTimeout(debounceTimeoutUnitName);
-        debounceTimeoutUnitName = setTimeout(filterByUnitName, 300);
-    }
-
-    function debouncedFamilyNameSearch() {
-        clearTimeout(debounceTimeoutFamilyName);
-        debounceTimeoutFamilyName = setTimeout(filterByFamilyName, 300);
-    }
-
-    let filteredByFirstName = [];
-    let filteredByUnitName = [];
-    let filteredByFamilyName = [];
-
-    // Filter by First Name
-    function filterByFirstName() {
-        const firstNameValue = document.getElementById('firstNameSearch').value.toLowerCase();
-        filteredByFirstName = families.filter(family => 
-            family.members.some(member => member.name.toLowerCase().includes(firstNameValue))
-        );
-        updateFilteredResults();
-    }
-
-    // Filter by Unit Name
-    function filterByUnitName() {
-        const unitNameValue = document.getElementById('unitNameSearch').value.toLowerCase();
-        filteredByUnitName = families.filter(family => 
-            family.unitName.toLowerCase().includes(unitNameValue)
-        );
-        updateFilteredResults();
-    }
-
-    // Filter by Family Name
-    function filterByFamilyName() {
-        const familyNameValue = document.getElementById('familyNameSearch').value.toLowerCase();
-        filteredByFamilyName = families.filter(family => 
-            family.familyName.toLowerCase().includes(familyNameValue)
-        );
-        updateFilteredResults();
-    }
-
-    // Combine search results
-    function updateFilteredResults() {
-        filteredFamilies = filteredByFirstName.filter(family => 
-            filteredByUnitName.includes(family) && filteredByFamilyName.includes(family)
-        );
-        currentPage = 1;
-        renderPagination(filteredFamilies.length);
-        displayFamilies();
-    }
-
+    // Render pagination
     function renderPagination(totalItems) {
         const totalPages = Math.ceil(totalItems / itemsPerPage);
         const paginationElement = document.getElementById('pagination');
@@ -317,12 +305,14 @@
         }
     }
 
+    // Navigate to a specific page
     function goToPage(page) {
         currentPage = page;
         displayFamilies(page);
         renderPagination(filteredFamilies.length);
     }
 
+    // Show family details in a modal
     function showFamilyDetails(familyIndex) {
         const family = filteredFamilies[familyIndex];
         let modalContent = `
@@ -360,6 +350,7 @@
         familyDetailsModal.show();
     }
 
+    // Logout function
     function logout() {
         firebase.auth().signOut().then(() => {
             window.location.href = 'index.html';
@@ -367,7 +358,8 @@
             console.error('Logout error:', error);
         });
     }
-</script>   
+</script>
+   
 
 <script async src="https://apis.google.com/js/api.js"></script>
 

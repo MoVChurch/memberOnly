@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Family Dir2</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .family-card {
+            border: 1px solid #ddd;
+            margin: 20px 0;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .family-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: bold;
+        }
+        .family-table th, .family-table td {
+            text-align: center;
+        }
+        .family-contact {
+            display: flex;
+            align-items: center;
+        }
+        .family-contact img {
+            margin-right: 10px;
+        }
+        .family-photo {
+            max-width: 80px;
+            height: auto;
+            border-radius: 10px;
+        }
+        .pagination {
+            justify-content: center;
+        }
+        /*.filter-section {
+            margin: 20px 0;
+        }*/
+        .filter-section .form-control {
+            min-width: 200px;  /* Ensure input fields have enough space */
+        }
+        @media (max-width: 768px) {
+            .family-header h5 {
+                font-size: 16px;
+            }
+            .family-card {
+                padding: 10px;
+            }
+            .filter-section .form-control {
+                margin-bottom: 10px;  /* Add margin between fields on small screens */
+            }
+        }
+        
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">Member Portal</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="#">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">About</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Contact</a>
+                    </li>
+                </ul>
+                <button class="btn btn-outline-danger" onclick="logout()">Logout</button>
+            </div>
+        </div>
+    </nav>
+<div class="container">
+    <!-- Filter Section 
+    <div class="filter-section">
+        <input type="text" id="filterUnitName" class="form-control" placeholder="Filter by Unit Name" onkeyup="filterFamilies()">
+    </div> -->
+    <!-- Search Menu -->
+<div class="filter-section">
+    <div class="d-flex align-items-center justify-content-between">
+        <button class="btn btn-primary me-3" type="button" data-bs-toggle="collapse" data-bs-target="#searchOptions" aria-expanded="false" aria-controls="searchOptions">
+            Search Options
+        </button>
+        <div class="collapse show flex-grow-1" id="searchOptions">
+            <div class="row gx-2">
+                <div class="col">
+                    <input type="text" id="firstNameSearch" class="form-control" placeholder="First Name" onkeyup="debouncedFirstNameSearch()">
+                </div>
+                <div class="col">
+                    <input type="text" id="unitNameSearch" class="form-control" placeholder="Unit Name" onkeyup="debouncedUnitNameSearch()">
+                </div>
+                <div class="col">
+                    <input type="text" id="familyNameSearch" class="form-control" placeholder="Family Name" onkeyup="debouncedFamilyNameSearch()">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+    <div id="family-cards" class="row"></div>
+
+    <!-- Pagination -->
+    <nav>
+        <ul id="pagination" class="pagination"></ul>
+    </nav>
+</div>
+<!-- Modal for "More Details" -->
+<div class="modal fade" id="familyDetailsModal" tabindex="-1" aria-labelledby="familyDetailsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="familyDetailsModalLabel">Family Details</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div id="family-details-content">
+            <!-- Dynamic family details will be loaded here -->
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<!-- Firebase SDKs from CDN (browser version) -->
+<script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-auth-compat.js"></script>
+<script src="https://apis.google.com/js/api.js"></script>
+<script>
+    let families = [];
+    let filteredFamilies = [];
+    const itemsPerPage = 10;
+    let currentPage = 1;
+    // Initialize Firebase
+    const firebaseConfig = {
+        apiKey: "AIzaSyCOboG8dsoh6MSW3lL_9pY9pB1kUJ35e7U",
+        authDomain: "movchurch-400610.firebaseapp.com",
+        projectId: "movchurch-400610",
+        appId: "1:1088970662172:web:c57adb76c641b1a3749ad9"
+    };
+
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+
+    // Check if the user is authenticated
+    firebase.auth().onAuthStateChanged(function(user) {
+        if (user) {
+            // User is authenticated, proceed to fetch Google Sheets data
+            loadClient();
+        } else {
+            // No user is signed in, redirect to login page
+            window.location.href = 'index.html';
+        }
+    });
+
+    function loadClient() {
+        gapi.load('client', fetchGoogleSheetsData); // Load the Google Sheets API
+    }
+
+    function fetchGoogleSheetsData() {
+        const spreadsheetId = '18JSFAA8tDes6PhCWPCpayjMe2PLF40st5BxyOuvUFJo';  // Replace with your Google Sheet ID
+        const range = 'Report!A2:M';  // Adjust the range according to your data
+
+        gapi.client.init({
+            'apiKey': 'AIzaSyDoO_nMjQbaUVQgnRCQY9dzMXGw2fnDq_k', // Replace with your Google API Key
+            'discoveryDocs': ["https://sheets.googleapis.com/$discovery/rest?version=v4"]
+        }).then(function () {
+            return gapi.client.sheets.spreadsheets.values.get({
+                spreadsheetId: spreadsheetId,
+                range: range,
+            });
+        }).then(function (response) {
+            families = groupByFamilyId(response.result.values);
+            filteredFamilies = families;
+            renderPagination(filteredFamilies.length);
+            displayFamilies();
+        }, function (error) {
+            console.log('Error: ' + error.message);
+        });
+    }
+
+    function groupByFamilyId(data) {
+        const groupedFamilies = {};
+        data.forEach(row => {
+            const familyId = row[1]; // Family ID column
+            if (!groupedFamilies[familyId]) {
+                groupedFamilies[familyId] = {
+                    unitName: row[0],
+                    familyName: row[11],
+                    members: []
+                };
+            }
+            groupedFamilies[familyId].members.push({
+                name: row[4],
+                relationship: row[6],
+                dob: row[7],
+                dom: row[8],
+                bloodgrp: row[3],
+                profession: row[10],
+                contactNumber: row[9],
+                status: row[13] === '1' ? 'Active' : 'Inactive'
+            });
+        });
+        return Object.values(groupedFamilies);
+    }
+
+    function displayFamilies(page = 1) {
+        const startIndex = (page - 1) * itemsPerPage;
+        const endIndex = startIndex + itemsPerPage;
+        const familiesToShow = filteredFamilies.slice(startIndex, endIndex);
+
+        const familyCardsContainer = document.getElementById('family-cards');
+        familyCardsContainer.innerHTML = '';
+
+        familiesToShow.forEach(family => {
+            const card = `
+                <div class="col-md-6">
+                    <div class="family-card">
+                        <div class="family-header">
+                            <div>
+                                <h5>${family.members[0].name}</h5>
+                                <p>Family: ${family.familyName}</p>
+                            </div>
+                        </div>
+                        <p><strong>Unit Name:</strong> ${family.unitName}</p>
+                        <button class="btn btn-primary" onclick="showFamilyDetails(${filteredFamilies.indexOf(family)})">More Details</button>
+                    </div>
+                </div>
+            `;
+            familyCardsContainer.innerHTML += card;
+        });
+    }
+
+    // Debounce search functions
+    let debounceTimeoutFirstName, debounceTimeoutUnitName, debounceTimeoutFamilyName;
+
+    function debouncedFirstNameSearch() {
+        clearTimeout(debounceTimeoutFirstName);
+        debounceTimeoutFirstName = setTimeout(filterByFirstName, 300);
+    }
+
+    function debouncedUnitNameSearch() {
+        clearTimeout(debounceTimeoutUnitName);
+        debounceTimeoutUnitName = setTimeout(filterByUnitName, 300);
+    }
+
+    function debouncedFamilyNameSearch() {
+        clearTimeout(debounceTimeoutFamilyName);
+        debounceTimeoutFamilyName = setTimeout(filterByFamilyName, 300);
+    }
+
+    let filteredByFirstName = [];
+    let filteredByUnitName = [];
+    let filteredByFamilyName = [];
+
+    // Filter by First Name
+    function filterByFirstName() {
+        const firstNameValue = document.getElementById('firstNameSearch').value.toLowerCase();
+        filteredByFirstName = families.filter(family => 
+            family.members.some(member => member.name.toLowerCase().includes(firstNameValue))
+        );
+        updateFilteredResults();
+    }
+
+    // Filter by Unit Name
+    function filterByUnitName() {
+        const unitNameValue = document.getElementById('unitNameSearch').value.toLowerCase();
+        filteredByUnitName = families.filter(family => 
+            family.unitName.toLowerCase().includes(unitNameValue)
+        );
+        updateFilteredResults();
+    }
+
+    // Filter by Family Name
+    function filterByFamilyName() {
+        const familyNameValue = document.getElementById('familyNameSearch').value.toLowerCase();
+        filteredByFamilyName = families.filter(family => 
+            family.familyName.toLowerCase().includes(familyNameValue)
+        );
+        updateFilteredResults();
+    }
+
+    // Combine search results
+    function updateFilteredResults() {
+        filteredFamilies = filteredByFirstName.filter(family => 
+            filteredByUnitName.includes(family) && filteredByFamilyName.includes(family)
+        );
+        currentPage = 1;
+        renderPagination(filteredFamilies.length);
+        displayFamilies();
+    }
+
+    function renderPagination(totalItems) {
+        const totalPages = Math.ceil(totalItems / itemsPerPage);
+        const paginationElement = document.getElementById('pagination');
+        paginationElement.innerHTML = '';
+
+        for (let i = 1; i <= totalPages; i++) {
+            const pageItem = `<li class="page-item ${i === currentPage ? 'active' : ''}">
+                <a class="page-link" href="#" onclick="goToPage(${i})">${i}</a></li>`;
+            paginationElement.innerHTML += pageItem;
+        }
+    }
+
+    function goToPage(page) {
+        currentPage = page;
+        displayFamilies(page);
+        renderPagination(filteredFamilies.length);
+    }
+
+    function showFamilyDetails(familyIndex) {
+        const family = filteredFamilies[familyIndex];
+        let modalContent = `
+            <p><strong>Unit Name:</strong> ${family.unitName}</p>
+            <p><strong>Family Name:</strong> ${family.familyName}</p>
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Rel.</th>
+                        <th>D.O.B</th>
+                        <th>D.O.M</th>
+                        <th>Blood Grp</th>
+                        <th>Profession</th>
+                        <th>Cell No.</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${family.members.map(member => `
+                        <tr>
+                            <td>${member.name}</td>
+                            <td>${member.relationship}</td>
+                            <td>${member.dob}</td>
+                            <td>${member.dom}</td>
+                            <td>${member.bloodgrp}</td>
+                            <td>${member.profession}</td>
+                            <td>${member.contactNumber}</td>
+                        </tr>
+                    `).join('')}
+                </tbody>
+            </table>
+        `;
+        document.getElementById('family-details-content').innerHTML = modalContent;
+        var familyDetailsModal = new bootstrap.Modal(document.getElementById('familyDetailsModal'));
+        familyDetailsModal.show();
+    }
+
+    function logout() {
+        firebase.auth().signOut().then(() => {
+            window.location.href = 'index.html';
+        }).catch((error) => {
+            console.error('Logout error:', error);
+        });
+    }
+</script>   
+
+<script async src="https://apis.google.com/js/api.js"></script>
+
+</body>
+</html>

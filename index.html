@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login with Google</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body, html {
+            height: 100%;
+            margin: 0;
+            background: radial-gradient(circle at top, #d4a8ff, #a889e6, #6a63c9, #4942a5, #232144);
+        }
+        .login-card {
+            background-color: rgb(219, 182, 88);
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            text-align: center;
+        }
+        .login-card h5 {
+            color: black;
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+        .google-btn {
+            background-color: white;
+            color: #555;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: none;
+            border-radius: 5px;
+            padding: 10px;
+            width: 100%;
+            text-decoration: none;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: box-shadow 0.3s ease;
+        }
+        .google-btn:hover {
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        .google-btn img {
+            margin-right: 10px;
+        }
+        .logo-img {
+            width: 200px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="d-flex justify-content-center align-items-center" style="height: 100%;">
+        <div class="login-card">
+            <!-- Logo Image -->
+            <img src="MOV-logo.png" alt="Logo" class="logo-img">
+            <!-- Instruction Text 
+            <h5>Sign in with your Google Account</h5> -->
+            <!-- Google Sign-in Button -->
+            <button id="login-btn" class="btn btn-primary d-flex align-items-center" onclick="signInWithGoogle()">
+                <img src="g-logo.png" alt="Google Logo" width="20" class="me-2">
+                Sign in with Google
+            </button> 
+        </div>
+        <div id="status" class="welcome-message"></div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const provider = new firebase.auth.GoogleAuthProvider();
+      
+        document.getElementById("login-btn").onclick = async function() {
+          const result = await firebase.auth().signInWithPopup(provider);
+          const user = result.user;
+      
+          // Capture user info and send it to Firestore for approval
+          await registerUser(user);
+        };
+      
+        async function registerUser(user) {
+          const userInfo = {
+            email: user.email,
+            displayName: user.displayName,
+            uid: user.uid,
+            status: 'pending',  // Set initial status to pending
+          };
+      
+          // Add user info to Firestore
+          const db = firebase.firestore();
+          await db.collection('pendingUsers').add(userInfo);
+          document.getElementById("status").innerText = "Registration successful! Waiting for approval.";
+        }
+      </script>
+    
+       <!-- Firebase SDKs from CDN (browser version) -->
+       <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
+       <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-auth-compat.js"></script>
+       <script src="https://apis.google.com/js/api.js"></script>
+    
+      <script>
+        // Ensure Firebase is initialized before any Firebase method is called
+        document.addEventListener("DOMContentLoaded", function () {
+          // Your Firebase configuration
+          const firebaseConfig = {
+            apiKey: "AIzaSyCOboG8dsoh6MSW3lL_9pY9pB1kUJ35e7U",
+            authDomain: "movchurch-400610.firebaseapp.com",
+            projectId: "movchurch-400610",
+            appId: "1:1088970662172:web:c57adb76c641b1a3749ad9"
+          };
+    
+          // Initialize Firebase
+          const app = firebase.initializeApp(firebaseConfig);
+          const auth = firebase.auth();
+          const provider = new firebase.auth.GoogleAuthProvider();
+    
+          // Sign-in function using Firebase Google Auth
+          window.signInWithGoogle = function () {
+            firebase.auth()
+              .signInWithPopup(provider)
+              .then(async (result) => {
+                const user = result.user;
+                const userEmail = user.email;
+    
+                // Send email to the Apps Script API for whitelist check
+                fetch(`https://script.google.com/macros/s/AKfycbxDzLoCRfcBa4BWnSQ0WjTP4RFY-yNSSU6Fsfj17UkPMwxGPO2n3w8elioDgQce4w0t/exec?email=${userEmail}`)
+                .then(response => response.json())
+                .then(data => {
+                  console.log(data); // data will contain: { email: "test@example.com", exists: true/false }
+    
+                  // Check if the email exists in the whitelist
+                  if (data.exists) {
+                    document.getElementById("status").innerHTML = `Welcome, ${user.displayName}!`;
+                    document.getElementById("login-btn").style.display = 'none'; // Hide login button
+                    // If whitelisted, redirect to the member page
+                    window.location.href = 'member-page.html';
+
+                  } else {
+                    // If not whitelisted, sign out
+                    alert("Access Denied: Your email is not whitelisted.");
+                    auth.signOut().then(() => {
+                      document.getElementById("status").innerHTML = "You have been logged out.";
+                    });
+                  }
+                })
+                .catch(error => {
+                  console.error('Error during API call:', error);
+                  alert("An error occurred while checking the whitelist.");
+                });
+              })
+              .catch((error) => {
+                console.error('Error during Google Sign-In:', error);
+                alert("An error occurred during sign-in. Please try again.");
+              });
+          };
+    
+          // Sign out function
+          window.signOut = function () {
+            firebase.auth().signOut().then(() => {
+              document.getElementById("status").innerHTML = "You have signed out.";
+              document.getElementById("login-btn").style.display = 'block'; // Show login button
+            }).catch((error) => {
+              console.error("Error signing out: ", error.message);
+            });
+          }
+        });
+    
+        // Function to fetch whitelist from Google Sheets
+        async function fetchWhitelistFromGoogleSheets() {
+          return new Promise((resolve, reject) => {
+            gapi.load('client', () => {
+              gapi.client.init({
+                apiKey: 'AIzaSyDoO_nMjQbaUVQgnRCQY9dzMXGw2fnDq_k',
+                discoveryDocs: ["https://sheets.googleapis.com/$discovery/rest?version=v4"],
+              }).then(() => {
+                return gapi.client.sheets.spreadsheets.values.get({
+                  spreadsheetId: '1ECB-Tg84HL0_y7V5AI00CfiK_30bgTpILAuNAB-AvRg',
+                  range: 'AuthorizedEmail!A2:A'
+                });
+              }).then((response) => {
+                const allowedUsers = response.result.values.flat();
+                resolve(allowedUsers); // Return the list of emails from Sheets
+              }).catch((error) => {
+                console.error("Error fetching whitelist from Google Sheets: ", error);
+                reject(error);
+              });
+            });
+          });
+        }
+    
+        // Load Google API client library
+        gapi.load('client', () => {});
+      </script>
+    
+</body>
+</html>

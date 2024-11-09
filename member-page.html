@@ -194,14 +194,20 @@
     // Fetch data from Google Sheets
     function fetchGoogleSheetsData() {
         const spreadsheetId = '18JSFAA8tDes6PhCWPCpayjMe2PLF40st5BxyOuvUFJo';  // Replace with your spreadsheet ID
-        const range = 'Report!A2:M';  // Adjust the range based on your sheet structure
+        const range = 'Report!A2:N';  // Adjust the range based on your sheet structure
 
         gapi.client.sheets.spreadsheets.values.get({
             spreadsheetId: spreadsheetId,
             range: range,
         }).then(function (response) {
-            families = groupByFamilyId(response.result.values);
+            // Filter rows where row[13] is '1' (Active ones Only)
+            const filteredData = response.result.values.filter(row => row[13] === '1');
+
+            // Group filtered data by family ID
+            families = groupByFamilyId(filteredData);
             filteredFamilies = families;
+
+            // Render pagination and initial families (first page)
             renderPagination(filteredFamilies.length);
             displayFamilies();
         }).catch(function (error) {

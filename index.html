@@ -3,9 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login with Google</title>
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>MoV Member Only</title>
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+
+     <!-- Favicons -->
+    <link href="assets/img/MOV-logo.png" rel="icon">
+    <link href="assets/img/MOV-logo.png" rel="apple-touch-icon">
+     
+    <!-- Main CSS File -->
+    <link href="assets/css/main.css" rel="stylesheet">
     <style>
         body, html {
             height: 100%;
@@ -38,6 +45,7 @@
             text-decoration: none;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
             transition: box-shadow 0.3s ease;
+            margin-top: 20px;
         }
         .google-btn:hover {
             box-shadow: 0 4px 8px rgba(0,0,0,0.2);
@@ -49,27 +57,33 @@
             width: 200px;
             margin-bottom: 20px;
         }
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
     </style>
 </head>
 <body>
 
-    <div class="d-flex justify-content-center align-items-center" style="height: 100%;">
+    <div class="container">
         <div class="login-card">
             <!-- Logo Image -->
-            <img src="MOV-logo.png" alt="Logo" class="logo-img">
+            <img src="assets/img/MOV-logo.png" alt="Logo" class="logo-img">
             <!-- Instruction Text 
             <h5>Sign in with your Google Account</h5> -->
             <!-- Google Sign-in Button -->
-            <button id="login-btn" class="btn btn-primary d-flex align-items-center" onclick="signInWithGoogle()">
-                <img src="g-logo.png" alt="Google Logo" width="20" class="me-2">
-                Sign in with Google
-            </button> 
+            <button id="login-btn" class="google-btn" onclick="signInWithGoogle()">
+              <img src="assets/img/g-logo.png" alt="Google Logo" width="20" class="me-2">
+              Sign in with Google
+          </button> 
         </div>
         <div id="status" class="welcome-message"></div>
     </div>
 
     <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="assets/js/main.js"></script>
     <script>
         const provider = new firebase.auth.GoogleAuthProvider();
       
@@ -136,7 +150,7 @@
                     document.getElementById("status").innerHTML = `Welcome, ${user.displayName}!`;
                     document.getElementById("login-btn").style.display = 'none'; // Hide login button
                     // If whitelisted, redirect to the member page
-                    window.location.href = 'member-page.html';
+                    window.location.href = 'dashboard.html';
 
                   } else {
                     // If not whitelisted, sign out

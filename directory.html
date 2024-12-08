@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <title>Family Directory</title>
+  <meta name="description" content="">
+  <meta name="keywords" content="">
+
+  <!-- Favicons -->
+  <link href="assets/img/MOV-logo.png" rel="icon">
+  <link href="assets/img/MOV-logo.png" rel="apple-touch-icon">
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com" rel="preconnect">
+  <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&family=Inter:wght@100;200;300;400;500;600;700;800;900&family=Nunito:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+
+  <!-- Vendor CSS Files -->
+  <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+  <link href="assets/vendor/aos/aos.css" rel="stylesheet">
+
+  <!-- Main CSS File -->
+  <link href="assets/css/main.css" rel="stylesheet">
+
+  <!-- =======================================================
+  * Template Name: QuickStart with Bootstrap v5.3.3
+  ======================================================== -->
+</head>
+
+<body class="starter-page-page">
+
+  <header id="header" class="header d-flex align-items-center sticky-top">
+    <div class="container-fluid container-xl position-relative d-flex align-items-center">
+
+      <a href="#" class="logo d-flex align-items-center me-auto">
+        <img src="assets/img/MOV-logo.png" alt="">
+        <h1 class="sitename">Members</h1>
+      </a>
+
+      <nav id="navmenu" class="navmenu">
+        <ul>
+          <li><a href="dashboard.html">Home</a></li>
+          <li><a href="#">Trustees</a></li>
+          <li><a href="#">Annual Occasions</a></li>
+          <li class="dropdown"><a href="#"><span>Associations</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
+            <ul>
+              <li><a href="#">Choir</a></li>
+              <li><a href="#">Catechism</a></li>
+              <li><a href="#">Pithurvedi</a></li>
+              <li><a href="#">Mathrusangam</a></li>
+              <li><a href="#">Parish Council</a></li>
+            </ul>
+          </li>
+        </ul>
+        <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
+      </nav>
+
+      <a class="btn-getstarted" onclick="logout()" href="#">Logout</a>
+
+    </div>
+  </header>
+
+  <main class="main">
+
+    <!-- Page Title -->
+    <div class="page-title" data-aos="fade">
+      <div class="container d-lg-flex justify-content-between align-items-center">
+        <h1 class="mb-2 mb-lg-0">Family Directory</h1>
+        <!-- <nav class="breadcrumbs">
+          <ol>
+            <li><a href="dashboard.html">Home</a></li>
+            <li class="current">Family Directory</li>
+          </ol>
+        </nav> -->
+      </div>
+    </div><!-- End Page Title -->
+
+    <!-- Starter Section Section -->
+    <section id="starter-section" class="starter-section section">
+
+      <div class="container" data-aos="fade-up">
+        <!-- Unit Name Dropdown -->
+        <div class="form-group">
+          <label for="unitNameDropdown">Select <b>Unit Name:</b></label>
+          <select id="unitNameDropdown" class="form-select form-select-lg mb-3" onchange="filterByUnitName()">
+              <option value="St. Kuriakose Elias Chavara">St. Chavara</option>
+              <option value="St. Mother Theresa">St. Mother Theresa</option>
+              <option value="Holy Cross">Holy Cross</option>
+              <option value="Holy Family">Holy Family</option>
+              <option value="Infant Jesus" selected>Infant Jesus</option>
+              <option value="Little Flower">Little Flower</option>
+              <option value="Our Lady of Perpetual Succour">OLPS</option>
+              <option value="Our Lady of Lourdes">OLL</option>
+              <option value="St. Alphonsa">St. Alphonsa</option>
+              <option value="St. Antony">St. Antony</option>
+              <option value="St. Francis Assissi">St. Francis Assissi</option>
+              <option value="St. George">St. George</option>
+              <option value="St. Joseph">St. Joseph</option>
+              <option value="St. Jude">St. Jude</option>
+              <option value="St. Mary’s">St. Mary</option>
+              <option value="St. Paul">St. Paul</option>
+              <option value="St. Sebastian">St. Sebastian</option>
+              <option value="St. Thomas">St. Thomas</option>
+              <option value="Sacred Heart">Sacred Heart</option>
+              <option value="St. Peter">St. Peter</option>
+              <option value="St. Maria Goretti">St. Maria Goretti</option>
+              <option value="St. John">St. John</option>
+          </select>
+        </div>
+
+       <!-- Toggle between First Name and Family Name Search -->
+        <div class="form-group">
+            <label>Search By: &nbsp;&nbsp;</label>
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="searchMode" id="firstNameSearchToggle" value="firstName" checked>
+                <label class="form-check-label" for="firstNameSearchToggle">First Name</label>
+            </div>
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="searchMode" id="familyNameSearchToggle" value="familyName">
+                <label class="form-check-label" for="familyNameSearchToggle">Family Name</label>
+            </div>
+        </div>
+    
+        <!-- Search Bar -->
+        <div class="form-group">
+            <input type="text" id="searchInput" class="form-control" placeholder="Search..." oninput="searchByName()">
+        </div>
+
+      </div><!-- /End of Container -->
+
+    </section><!-- /Starter Section Section -->
+
+    <section id="featured-services" class="featured-services section light-background">
+      <div class="container">
+        <div class="row gy-4" id="family-cards">
+          <!-- Family cards will be inserted here dynamically -->
+        </div>
+    
+        <!-- Pagination -->
+        <nav class="d-flex justify-content-center">
+          <ul class="pagination" id="pagination"></ul>
+        </nav>
+      </div>
+
+      <!-- Modal for "More Details" -->
+      <div class="modal fade" id="familyDetailsModal" tabindex="-1" aria-labelledby="familyDetailsModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="familyDetailsModalLabel"><b>Family Details</b></h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <div id="family-details-content">
+                <!-- Dynamic family details will be loaded here -->
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </section><!-- /Featured Services Section -->
+
+  </main>
+
+  <footer id="footer" class="footer position-relative light-background">
+
+    <div class="container copyright text-center mt-4">
+      <strong class="px-1 sitename">Mother Of Victory Shrine</strong><p>Tikujiniwadi, Thane</p>
+      <div class="credits">
+        Developed with <i class="bi bi-heart-fill" style="color: red;"></i> by <strong><a href="https://getitautomated.com" target="_blank" rel="noopener noreferrer">Tom Thomas</a></strong>
+      </div>
+    </div>
+
+  </footer>
+
+
+  <!-- Scroll Top -->
+  <a href="#" id="scroll-top" class="scroll-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+
+  <!-- Preloader -->
+  <div id="preloader"></div>
+
+  <!-- Vendor JS Files -->
+  <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script src="assets/vendor/aos/aos.js"></script>
+
+  <!-- Main JS File -->
+  <script src="assets/js/main.js"></script>
+  <!-- Firebase SDKs from CDN (browser version) -->
+<script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-auth-compat.js"></script>
+<script src="https://apis.google.com/js/api.js"></script>
+<script>
+    let families = [];
+    let filteredFamilies = [];
+    let filteredByUnit = [];
+    const itemsPerPage = 10;
+    let currentPage = 1;
+
+    // Initialize Firebase
+    const firebaseConfig = {
+        apiKey: "AIzaSyCOboG8dsoh6MSW3lL_9pY9pB1kUJ35e7U",
+        authDomain: "movchurch-400610.firebaseapp.com",
+        projectId: "movchurch-400610",
+        appId: "1:1088970662172:web:c57adb76c641b1a3749ad9"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+
+    // Check if the user is authenticated
+    firebase.auth().onAuthStateChanged(function (user) {
+        if (user) {
+            // User is authenticated, proceed to load Google Sheets data
+            loadClient();  // Load GAPI client to fetch data
+        } else {
+            // No user is signed in, redirect to login page
+            window.location.href = 'index.html';
+        }
+    });
+
+    // Load Google API client
+    function loadClient() {
+        gapi.load('client', initClient);
+    }
+
+    // Initialize Google Sheets client
+    function initClient() {
+        gapi.client.init({
+            apiKey: 'AIzaSyDoO_nMjQbaUVQgnRCQY9dzMXGw2fnDq_k',  // Replace with your API key
+            discoveryDocs: ["https://sheets.googleapis.com/$discovery/rest?version=v4"]
+        }).then(function () {
+            fetchGoogleSheetsData();
+        }).catch(function (error) {
+            console.log('Error initializing Google Sheets API:', error);
+        });
+    }
+
+    // Fetch data from Google Sheets
+    function fetchGoogleSheetsData() {
+        const spreadsheetId = '1YkEa-ad3PXOSCnUj019-DHqIQqYyUcO0zKNDy2qNyBA';  // Replace with your spreadsheet ID
+        const range = 'Directory!A2:P';  // Adjust the range based on your sheet structure
+
+        gapi.client.sheets.spreadsheets.values.get({
+            spreadsheetId: spreadsheetId,
+            range: range,
+        }).then(function (response) {
+            // Filter rows where row[8] is '1' (Active ones Only)
+            const filteredData = response.result.values.filter(row => row[8] === '1');
+
+            // Group filtered data by family ID
+            families = groupByFamilyId(filteredData);
+            filteredFamilies = families;
+
+            // Render pagination and initial families (first page)
+            filterByUnitName();
+            //renderPagination(filteredFamilies.length);
+            //displayFamilies();
+        }).catch(function (error) {
+            console.error('Error fetching Google Sheets data:', error);
+        });
+    }
+
+    function groupByFamilyId(data) {
+        const groupedFamilies = {};
+        data.forEach(row => {
+            const familyId = row[1]; // Family ID column
+            if (!groupedFamilies[familyId]) {
+                groupedFamilies[familyId] = {
+                    unitName: row[0],
+                    familyName: row[3],
+                    address: row[14] || '',
+                    members: []
+                };
+            }
+            groupedFamilies[familyId].members.push({
+                name: row[4],
+                relationship: row[6],
+                contactNumber: row[7],
+                dob: row[10],
+                dom: row[11] || '',
+                bloodgrp: row[12] || '',
+                profession: row[13] || '',
+                status: String(row[8]) === '1' ? 'Active' : 'Inactive'
+            });
+        });
+        return Object.values(groupedFamilies);
+    }
+
+    // Function to filter by unit name
+    function filterByUnitName() {
+        const unitNameValue = document.getElementById('unitNameDropdown').value;
+
+        // Filter families based on selected unit name
+        filteredByUnit = families.filter(family => family.unitName === unitNameValue);
+        filteredFamilies = filteredByUnit;
+        currentPage = 1;
+        renderPagination(filteredFamilies.length);
+        displayFamilies();
+    }
+
+    // Function to search by first name or family name based on the toggle selection
+    function searchByName() {
+        const searchValue = document.getElementById('searchInput').value.toLowerCase();
+        const searchMode = document.querySelector('input[name="searchMode"]:checked').value;
+
+        if (searchMode === "firstName") {
+            filteredFamilies = filteredByUnit.filter(family =>
+                family.members.some(member => member.name.toLowerCase().includes(searchValue))
+            );
+        } else if (searchMode === "familyName") {
+            filteredFamilies = filteredByUnit.filter(family =>
+                family.familyName.toLowerCase().includes(searchValue)
+            );
+        }
+
+        currentPage = 1;
+        renderPagination(filteredFamilies.length);
+        displayFamilies();
+    }
+
+    // Function to display families with pagination
+    function displayFamilies(page = 1) {
+    const startIndex = (page - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    const familiesToShow = filteredFamilies.slice(startIndex, endIndex);
+
+    const familyCardsContainer = document.getElementById('family-cards');
+    familyCardsContainer.innerHTML = '';
+
+    familiesToShow.forEach(family => {
+        const card = `
+            <div class="col-xl-4 col-lg-6" data-aos="fade-up" data-aos-delay="50">
+                <div class="family-card service-item d-flex">
+                  <div class="icon flex-shrink-0"><i class="bi bi-bar-chart"></i></div>
+                  <div class="family-header">
+                    <h4 class="title"><a href="#" class="stretched-link" onclick="showFamilyDetails(${filteredFamilies.indexOf(family)})">${family.members[0].name}</a></h4>
+                    <p class="description"><strong>Family Name:</strong> ${family.familyName} <br><strong>Unit:</strong> ${family.unitName}</p>
+                  </div>
+                </div>
+              </div><!-- End Service Item -->
+        `;
+        familyCardsContainer.innerHTML += card;
+    });
+  }
+
+    // Render pagination
+    function renderPagination(totalItems) {
+        const totalPages = Math.ceil(totalItems / itemsPerPage);
+        const paginationElement = document.getElementById('pagination');
+        paginationElement.innerHTML = '';
+
+        for (let i = 1; i <= totalPages; i++) {
+            const pageItem = `<li class="page-item ${i === currentPage ? 'active' : ''}">
+                <a class="page-link" href="#" onclick="goToPage(${i})">${i}</a></li>`;
+            paginationElement.innerHTML += pageItem;
+        }
+    }
+
+    // Navigate to a specific page
+    function goToPage(page) {
+        currentPage = page;
+        displayFamilies(page);
+        renderPagination(filteredFamilies.length);
+    }
+
+    // Show family details in a modal
+    function showFamilyDetails(familyIndex) {
+        const family = filteredFamilies[familyIndex];
+        let modalContent = `
+            <p><strong>Unit Name:</strong> ${family.unitName}</p>
+            <p><strong>Family Name:</strong> ${family.familyName}</p>
+            <p><strong>Address:</strong> ${family.address}</p>
+            <div class="table-responsive"> 
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Rel.</th>
+                        <th>D.O.B</th>
+                        <th>D.O.M</th>
+                        <th>Blood Grp</th>
+                        <th>Profession</th>
+                        <th>Cell No.</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${family.members.map(member => `
+                        <tr>
+                            <td>${member.name}</td>
+                            <td>${member.relationship}</td>
+                            <td>${member.dob}</td>
+                            <td>${member.dom}</td>
+                            <td>${member.bloodgrp}</td>
+                            <td>${member.profession}</td>
+                            <td>${member.contactNumber}</td>
+                        </tr>
+                    `).join('')}
+                </tbody>
+            </table>
+          </div>
+        `;
+        document.getElementById('family-details-content').innerHTML = modalContent;
+        var familyDetailsModal = new bootstrap.Modal(document.getElementById('familyDetailsModal'));
+        familyDetailsModal.show();
+    }
+
+    // Logout function
+    function logout() {
+        firebase.auth().signOut().then(() => {
+            window.location.href = 'index.html';
+        }).catch((error) => {
+            console.error('Logout error:', error);
+        });
+    }
+</script>
+   
+
+<script async src="https://apis.google.com/js/api.js"></script>
+
+</body>
+
+</html>

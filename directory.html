@@ -5,7 +5,6 @@
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
   <title>Family Directory</title>
-  <meta name="robots" content="noindex, nofollow"> <!-- Page not to be part of Google Search -->
   <meta name="description" content="">
   <meta name="keywords" content="">
 
@@ -87,14 +86,15 @@
         <div class="form-group">
           <label for="unitNameDropdown">Select <b>Unit Name:</b></label>
           <select id="unitNameDropdown" class="form-select form-select-lg mb-3" onchange="filterByUnitName()">
+              <option value="all">Select All Units</option>
               <option value="St. Kuriakose Elias Chavara">St. Chavara</option>
               <option value="St. Mother Theresa">St. Mother Theresa</option>
               <option value="Holy Cross">Holy Cross</option>
               <option value="Holy Family">Holy Family</option>
               <option value="Infant Jesus" selected>Infant Jesus</option>
               <option value="Little Flower">Little Flower</option>
-              <option value="Our Lady of Perpetual Succour">OLPS</option>
-              <option value="Our Lady of Lourdes">OLL</option>
+              <option value="Our Lady of Perpetual Succour">OLPS (Our Lady of Perpetual Succour)</option>
+              <option value="Our Lady of Lourdes">OLL (Our Lady of Lourdes)</option>
               <option value="St. Alphonsa">St. Alphonsa</option>
               <option value="St. Antony">St. Antony</option>
               <option value="St. Francis Assissi">St. Francis Assissi</option>
@@ -131,6 +131,16 @@
         </div>
 
       </div><!-- /End of Container -->
+
+       <!-- Loading Spinner -->
+    <div id="loadingMessage" class="text-center" style="display:block;">
+      <!-- Bootstrap spinner -->
+      <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Loading...</span>
+      </div>
+      <p>Please hang on while we load the data...</p>
+    </div>
+
 
     </section><!-- /Starter Section Section -->
 
@@ -204,6 +214,19 @@
     let filteredByUnit = [];
     const itemsPerPage = 10;
     let currentPage = 1;
+
+    // Function to show the loading spinner
+    function showLoading() {
+        console.log('Showing loading spinner...');
+        document.getElementById('loadingMessage').style.display = 'block'; // Show the spinner
+    }
+
+    // Function to hide the loading spinner
+    function hideLoading() {
+      console.log('Hiding loading spinner...');  
+      document.getElementById('loadingMessage').style.display = 'none'; // Hide the spinner
+    }
+
 
     // Initialize Firebase
     const firebaseConfig = {
@@ -298,28 +321,50 @@
     // Function to filter by unit name
     function filterByUnitName() {
         const unitNameValue = document.getElementById('unitNameDropdown').value;
+        showLoading(); // Show loading spinner when data is being processed
 
-        // Filter families based on selected unit name
-        filteredByUnit = families.filter(family => family.unitName === unitNameValue);
-        filteredFamilies = filteredByUnit;
+        // If "Select All" is selected, show all families
+        if (unitNameValue === "all") {
+            filteredFamilies = families;
+        } else {
+            // Filter families based on selected unit name
+            filteredFamilies = families.filter(family => family.unitName === unitNameValue);
+        }
         currentPage = 1;
         renderPagination(filteredFamilies.length);
         displayFamilies();
+
+        hideLoading(); // Hide loading spinner once data is ready
     }
 
     // Function to search by first name or family name based on the toggle selection
     function searchByName() {
         const searchValue = document.getElementById('searchInput').value.toLowerCase();
         const searchMode = document.querySelector('input[name="searchMode"]:checked').value;
+        const unitFilter = document.getElementById('unitNameDropdown').value ;
 
         if (searchMode === "firstName") {
+           if (unitFilter === "all") {
+              filteredFamilies = families.filter(family =>
+                family.members.some(member => member.name.toLowerCase().includes(searchValue))
+              );
+           }
+           else {
             filteredFamilies = filteredByUnit.filter(family =>
                 family.members.some(member => member.name.toLowerCase().includes(searchValue))
-            );
+              );
+           }
         } else if (searchMode === "familyName") {
-            filteredFamilies = filteredByUnit.filter(family =>
-                family.familyName.toLowerCase().includes(searchValue)
-            );
+          if (unitFilter === "all") {
+              filteredFamilies = families.filter(family =>
+                  family.familyName.toLowerCase().includes(searchValue)
+              );
+           }
+           else {
+              filteredFamilies = filteredByUnit.filter(family =>
+                  family.familyName.toLowerCase().includes(searchValue)
+              );
+          }
         }
 
         currentPage = 1;
@@ -358,10 +403,26 @@
         const paginationElement = document.getElementById('pagination');
         paginationElement.innerHTML = '';
 
-        for (let i = 1; i <= totalPages; i++) {
+        // Calculate the page numbers to show
+        const maxPagesToShow = 5;
+        const startPage = Math.max(1, currentPage - Math.floor(maxPagesToShow / 2));
+        const endPage = Math.min(totalPages, startPage + maxPagesToShow - 1);
+
+         // Show previous page link
+        if (currentPage > 1) {
+            paginationElement.innerHTML += `<li class="page-item"><a class="page-link" href="#" onclick="goToPage(${currentPage - 1})">&laquo;</a></li>`;
+        }
+
+        // Show page numbers
+        for (let i = startPage; i <= endPage; i++) {
             const pageItem = `<li class="page-item ${i === currentPage ? 'active' : ''}">
                 <a class="page-link" href="#" onclick="goToPage(${i})">${i}</a></li>`;
             paginationElement.innerHTML += pageItem;
+        }
+
+        // Show next page link
+        if (currentPage < totalPages) {
+            paginationElement.innerHTML += `<li class="page-item"><a class="page-link" href="#" onclick="goToPage(${currentPage + 1})">&raquo;</a></li>`;
         }
     }
 

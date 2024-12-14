@@ -217,13 +217,13 @@
 
     // Function to show the loading spinner
     function showLoading() {
-        console.log('Showing loading spinner...');
+        //console.log('Showing loading spinner...');
         document.getElementById('loadingMessage').style.display = 'block'; // Show the spinner
     }
 
     // Function to hide the loading spinner
     function hideLoading() {
-      console.log('Hiding loading spinner...');  
+      //console.log('Hiding loading spinner...');  
       document.getElementById('loadingMessage').style.display = 'none'; // Hide the spinner
     }
 
@@ -277,11 +277,11 @@
             range: range,
         }).then(function (response) {
             // Filter rows where row[8] is '1' (Active ones Only)
-            const filteredData = response.result.values.filter(row => row[8] === '1');
+            const activeMembersList = response.result.values.filter(row => row[8] === '1');
 
             // Group filtered data by family ID
-            families = groupByFamilyId(filteredData);
-            filteredFamilies = families;
+            families = groupByFamilyId(activeMembersList);
+            //filteredFamilies = families;
 
             // Render pagination and initial families (first page)
             filterByUnitName();
@@ -320,15 +320,20 @@
 
     // Function to filter by unit name
     function filterByUnitName() {
+        // Clear the search input when the unit is changed
+        document.getElementById('searchInput').value = '';
+
         const unitNameValue = document.getElementById('unitNameDropdown').value;
         showLoading(); // Show loading spinner when data is being processed
 
         // If "Select All" is selected, show all families
         if (unitNameValue === "all") {
-            filteredFamilies = families;
+            filteredByUnit = families;
+            filteredFamilies = filteredByUnit;  // this filteredFamilies bucket is always used for display on UI
         } else {
             // Filter families based on selected unit name
-            filteredFamilies = families.filter(family => family.unitName === unitNameValue);
+            filteredByUnit = families.filter(family => family.unitName === unitNameValue);
+            filteredFamilies = filteredByUnit;  // this filteredFamilies bucket is always used for display on UI
         }
         currentPage = 1;
         renderPagination(filteredFamilies.length);
@@ -342,7 +347,7 @@
         const searchValue = document.getElementById('searchInput').value.toLowerCase();
         const searchMode = document.querySelector('input[name="searchMode"]:checked').value;
         const unitFilter = document.getElementById('unitNameDropdown').value ;
-
+        
         if (searchMode === "firstName") {
            if (unitFilter === "all") {
               filteredFamilies = families.filter(family =>
@@ -366,7 +371,7 @@
               );
           }
         }
-
+        
         currentPage = 1;
         renderPagination(filteredFamilies.length);
         displayFamilies();
@@ -374,27 +379,27 @@
 
     // Function to display families with pagination
     function displayFamilies(page = 1) {
-    const startIndex = (page - 1) * itemsPerPage;
-    const endIndex = startIndex + itemsPerPage;
-    const familiesToShow = filteredFamilies.slice(startIndex, endIndex);
+        const startIndex = (page - 1) * itemsPerPage;
+        const endIndex = startIndex + itemsPerPage;
+        const familiesToShow = filteredFamilies.slice(startIndex, endIndex);
 
-    const familyCardsContainer = document.getElementById('family-cards');
-    familyCardsContainer.innerHTML = '';
+        const familyCardsContainer = document.getElementById('family-cards');
+        familyCardsContainer.innerHTML = '';
 
-    familiesToShow.forEach(family => {
-        const card = `
-            <div class="col-xl-4 col-lg-6" data-aos="fade-up" data-aos-delay="50">
-                <div class="family-card service-item d-flex">
-                  <div class="icon flex-shrink-0"><i class="bi bi-bar-chart"></i></div>
-                  <div class="family-header">
-                    <h4 class="title"><a href="#" class="stretched-link" onclick="showFamilyDetails(${filteredFamilies.indexOf(family)})">${family.members[0].name}</a></h4>
-                    <p class="description"><strong>Family Name:</strong> ${family.familyName} <br><strong>Unit:</strong> ${family.unitName}</p>
-                  </div>
-                </div>
-              </div><!-- End Service Item -->
-        `;
-        familyCardsContainer.innerHTML += card;
-    });
+        familiesToShow.forEach(family => {
+            const card = `
+                <div class="col-xl-4 col-lg-6" data-aos="fade-up" data-aos-delay="50">
+                    <div class="family-card service-item d-flex">
+                      <div class="icon flex-shrink-0"><i class="bi bi-bar-chart"></i></div>
+                      <div class="family-header">
+                        <h4 class="title"><a href="#" class="stretched-link" onclick="showFamilyDetails(${filteredFamilies.indexOf(family)})">${family.members[0].name}</a></h4>
+                        <p class="description"><strong>Family Name:</strong> ${family.familyName} <br><strong>Unit:</strong> ${family.unitName}</p>
+                      </div>
+                    </div>
+                  </div><!-- End Service Item -->
+            `;
+            familyCardsContainer.innerHTML += card;
+        });
   }
 
     // Render pagination

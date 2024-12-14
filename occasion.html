@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <title>Member Only Dashboard</title>
+  <meta name="robots" content="noindex, nofollow"> <!-- Page not to be part of Google Search -->
+  <meta name="description" content="">
+  <meta name="keywords" content="">
+
+  <!-- Favicons -->
+  <link href="assets/img/MOV-logo.png" rel="icon">
+  <link href="assets/img/MOV-logo.png" rel="apple-touch-icon">
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com" rel="preconnect">
+  <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&family=Inter:wght@100;200;300;400;500;600;700;800;900&family=Nunito:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+
+  <!-- Vendor CSS Files -->
+  <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+  <link href="assets/vendor/aos/aos.css" rel="stylesheet">
+
+  <!-- Main CSS File -->
+  <link href="assets/css/main.css" rel="stylesheet">
+
+  <!-- =======================================================
+  * Template Name: QuickStart with Bootstrap v5.3.3
+  ======================================================== -->
+</head>
+
+<body class="service-details-page">
+
+  <header id="header" class="header d-flex align-items-center sticky-top">
+    <div class="container-fluid container-xl position-relative d-flex align-items-center">
+
+      <a href="#" class="logo d-flex align-items-center me-auto">
+        <img src="assets/img/MOV-logo.png" alt="">
+        <h1 class="sitename">Members</h1>
+      </a>
+
+      <nav id="navmenu" class="navmenu">
+        <ul>
+          <li><a href="dashboard.html">Home</a></li>
+          <li><a href="#">Trustees</a></li>
+          <li><a href="directory.html">Family Directory</a></li>
+          <li><a href="#" class="active">Annual Occasions</a></li>
+          <li class="dropdown"><a href="#"><span>Associations</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
+            <ul>
+              <li><a href="#">Choir</a></li>
+              <li><a href="#">Catechism</a></li>
+              <li><a href="#">Pithurvedi</a></li>
+              <li><a href="#">Mathrusangam</a></li>
+              <li><a href="#">Parish Council</a></li>
+            </ul>
+          </li>
+        </ul>
+        <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
+      </nav>
+
+      <a class="btn-getstarted" onclick="logout()" href="#">Logout</a>
+
+    </div>
+  </header>
+
+  <main class="main">
+    <!-- Page Title -->
+    <div class="page-title" data-aos="fade">
+        <div class="container d-lg-flex justify-content-between align-items-center">
+          <h1 class="mb-2 mb-lg-0">Celebrations</h1>
+          <nav class="breadcrumbs">
+            <ol>
+              <li>Current</li>
+              <li>Month</li>
+            </ol>
+          </nav>
+        </div>
+     </div><!-- End Page Title -->
+
+      <!-- Service Details Section -->
+      <section id="service-details" class="service-details section">
+  
+        <div class="container">
+            <!-- Dropdown to select section -->
+            <div class="row gy-5">
+                <div class="col-lg-4">
+                    <label for="data-selector">Occasion List:</label>
+                    <select id="data-selector" class="form-select" onchange="changeTableData()">
+                        <option value="birthday" selected>Birthday</option>
+                        <option value="anniversary">Wedding Anniversary</option>
+                    </select>
+                </div>
+            </div>
+            <p></p>
+            <!-- Occasion Table -->
+            <table id="occasion-table" class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Member Name</th>
+                        <th>Month-Day</th>
+                        <th>Unit Name</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Birthday table rows will be filled dynamically -->
+                </tbody>
+            </table>
+
+        </div>
+
+      </section><!-- /Service Details Section -->
+
+  </main>
+
+  <footer id="footer" class="footer position-relative light-background">
+
+    <div class="container copyright text-center mt-4">
+      <strong class="px-1 sitename">Mother Of Victory Shrine</strong><p>Tikujiniwadi, Thane</p>
+      <div class="credits">
+        Developed with <i class="bi bi-heart-fill" style="color: red;"></i> by <strong><a href="https://getitautomated.com" target="_blank" rel="noopener noreferrer">Tom Thomas</a></strong>
+      </div>
+    </div>
+
+  </footer>
+
+  <!-- Scroll Top -->
+  <a href="#" id="scroll-top" class="scroll-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+
+  <!-- Preloader -->
+  <div id="preloader"></div>
+
+  <!-- Vendor JS Files -->
+  <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script src="assets/vendor/aos/aos.js"></script>
+
+  <!-- Main JS File -->
+  <script src="assets/js/main.js"></script>
+  
+  <!-- Firebase SDKs from CDN (browser version) -->
+  <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-auth-compat.js"></script>
+
+  <script>
+        let birthdayList = [];
+        let anniversaryList = [];
+
+      // Firebase configuration
+      const firebaseConfig = {
+          apiKey: "AIzaSyCOboG8dsoh6MSW3lL_9pY9pB1kUJ35e7U",
+          authDomain: "movchurch-400610.firebaseapp.com",
+          projectId: "movchurch-400610",
+          appId: "1:1088970662172:web:c57adb76c641b1a3749ad9"
+      };
+      firebase.initializeApp(firebaseConfig);
+      const auth = firebase.auth();
+
+      // Check if the user is authenticated
+      firebase.auth().onAuthStateChanged(function (user) {
+          if (user) {
+              // If the user is logged in, show the dashboard content
+              // Load Google API client
+              gapi.load('client', initClient);
+          } else {
+              // If no user is logged in, redirect to login page
+              window.location.href = 'index.html';
+          }
+      });
+       // Logout function
+    function logout() {
+        firebase.auth().signOut().then(() => {
+            window.location.href = 'index.html';
+        }).catch((error) => {
+            console.error('Logout error:', error);
+        });
+    }
+
+    // Initialize Google Sheets client
+    function initClient() {
+        gapi.client.init({
+            apiKey: 'AIzaSyDoO_nMjQbaUVQgnRCQY9dzMXGw2fnDq_k',  // Replace with your API key
+            discoveryDocs: ["https://sheets.googleapis.com/$discovery/rest?version=v4"]
+        }).then(function () {
+            fetchGoogleSheetsData();
+        }).catch(function (error) {
+            console.log('Error initializing Google Sheets API:', error);
+        });
+    }
+
+    // Function to switch between Birthday and Wedding Anniversary data
+    function changeTableData() {
+        const selectedValue = document.getElementById('data-selector').value;
+        document.getElementById('occasion-table').style.display = 'table';
+        fillDataTable(selectedValue);
+    }
+
+
+    // Fetch data from Google Sheets
+    function fetchGoogleSheetsData() {
+        // Check if data is already in sessionStorage
+        if (sessionStorage.getItem('birthdayList') && sessionStorage.getItem('anniversaryList')) {
+                // Use the data from sessionStorage
+                birthdayList = JSON.parse(sessionStorage.getItem('birthdayList'));
+                anniversaryList = JSON.parse(sessionStorage.getItem('anniversaryList'));
+                const selectedValue = document.getElementById('data-selector').value;
+                fillDataTable(selectedValue);
+        } else 
+        {
+                const spreadsheetId = '1YkEa-ad3PXOSCnUj019-DHqIQqYyUcO0zKNDy2qNyBA';  // Replace with your spreadsheet ID
+                const range = 'Dates!A3:G';  // Adjust the range based on your sheet structure
+
+                gapi.client.sheets.spreadsheets.values.get({
+                    spreadsheetId: spreadsheetId,
+                    range: range,
+                }).then(function (response) {
+                // The data will be in response.result.values
+                
+                    // Fetch data from Google Sheets if not available in sessionStorage
+                    const rows = response.result.values;
+                    const selectedValue = document.getElementById('data-selector').value;
+
+                    if (rows.length > 0) {
+                    // Reset lists
+                    birthdayList = [];
+                    anniversaryList = [];
+
+                    rows.forEach(function(row) {
+                        // Assuming Birthday data is in columns A-C, and Anniversary data is in columns D-F
+                        const birthday = row.slice(0, 3);  // First 3 columns
+                        const anniversary = row.slice(4, 7);  // Next 3 columns
+
+                        // Ensure no blank rows are added
+                        if (birthday[0] && birthday[1] && birthday[2]) {
+                            birthdayList.push(birthday);  // Add to Birthday list if not blank
+                        }
+                        if (anniversary[0] && anniversary[1] && anniversary[2]) {
+                            anniversaryList.push(anniversary);  // Add to Anniversary list if not blank
+                        }
+                    });
+
+                    // Save the data in sessionStorage for future use
+                    sessionStorage.setItem('birthdayList', JSON.stringify(birthdayList));
+                    sessionStorage.setItem('anniversaryList', JSON.stringify(anniversaryList));
+
+                    // Now call function to populate the tables with the data
+                    fillDataTable(selectedValue);
+        
+                    } else {
+                            console.log('No data found.');
+                        }
+            }).catch(function (error) {
+                console.error('Error fetching Google Sheets data:', error);
+            });
+        }
+    }
+
+   // Function to fill the Birthday table with data
+    function fillDataTable(occasion) {
+        const TableBody = document.getElementById('occasion-table').getElementsByTagName('tbody')[0];
+        TableBody.innerHTML = '';  // Clear previous rows
+
+        if(occasion === 'birthday'){
+            birthdayList.forEach(function(birthday) {
+                const row = TableBody.insertRow();
+                row.innerHTML = `<td>${birthday[0]}</td><td>${birthday[1]}</td><td>${birthday[2]}</td>`;
+            });
+        }
+        else if(occasion === 'anniversary'){
+            anniversaryList.forEach(function(anniversary) {
+                const row = TableBody.insertRow();
+                row.innerHTML = `<td>${anniversary[0]}</td><td>${anniversary[1]}</td><td>${anniversary[2]}</td>`;
+            });
+        }
+    }
+
+  </script>
+
+</body>
+
+</html>

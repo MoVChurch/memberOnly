@@ -261,36 +261,36 @@
             apiKey: 'AIzaSyDoO_nMjQbaUVQgnRCQY9dzMXGw2fnDq_k',  // Replace with your API key
             discoveryDocs: ["https://sheets.googleapis.com/$discovery/rest?version=v4"]
         }).then(function () {
-            fetchGoogleSheetsData();
+          fetchSecureDirectoryData();
         }).catch(function (error) {
             console.log('Error initializing Google Sheets API:', error);
         });
     }
 
-    // Fetch data from Google Sheets
-    function fetchGoogleSheetsData() {
-        const spreadsheetId = '1YkEa-ad3PXOSCnUj019-DHqIQqYyUcO0zKNDy2qNyBA';  // Replace with your spreadsheet ID
-        const range = 'Directory!A2:P';  // Adjust the range based on your sheet structure
+    function fetchSecureDirectoryData() {
+        const userEmail = localStorage.getItem("userEmail");
+        if (!userEmail) {
+          alert("User email not found. Please log in again.");
+          window.location.href = "index.html";
+          return;
+        }
 
-        gapi.client.sheets.spreadsheets.values.get({
-            spreadsheetId: spreadsheetId,
-            range: range,
-        }).then(function (response) {
-            // Filter rows where row[8] is '1' (Active ones Only)
-            const activeMembersList = response.result.values.filter(row => row[8] === '1');
+        const url = `https://script.google.com/macros/s/AKfycbxPt8z7kJVPrcHZmnTM_7d6BwuMqK41eerglAvzbdMle03VQPROZ1X7muuks1iscM0/exec?email=${userEmail}`;
+        //const url = `http://localhost:3000/directory?email=${userEmail}` ;
+        fetch(url)
+          .then(response => response.json())
+          .then(data => {
+            // Now you can use `data` just like before
+            families = data; // This is already grouped
+            filterByUnitName(); 
+          })
+          .catch(err => {
+            console.error("Fetch error:", err);
+            alert("Unable to fetch directory data. Please try again later.");
+            hideLoading();
+          });
+      }
 
-            // Group filtered data by family ID
-            families = groupByFamilyId(activeMembersList);
-            //filteredFamilies = families;
-
-            // Render pagination and initial families (first page)
-            filterByUnitName();
-            //renderPagination(filteredFamilies.length);
-            //displayFamilies();
-        }).catch(function (error) {
-            console.error('Error fetching Google Sheets data:', error);
-        });
-    }
 
     function groupByFamilyId(data) {
         const groupedFamilies = {};
@@ -482,6 +482,7 @@
     // Logout function
     function logout() {
         firebase.auth().signOut().then(() => {
+            localStorage.removeItem("userEmail");
             window.location.href = 'index.html';
         }).catch((error) => {
             console.error('Logout error:', error);

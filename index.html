@@ -134,56 +134,52 @@
           const provider = new firebase.auth.GoogleAuthProvider();
     
           // Sign-in function using Firebase Google Auth
-          window.signInWithGoogle = function () {
-            firebase.auth()
-              .signInWithPopup(provider)
-              .then(async (result) => {
-                const user = result.user;
-                const userEmail = user.email;
-    
-                // Send email to the Apps Script API for whitelist check
-                fetch(`https://script.google.com/macros/s/AKfycbxDzLoCRfcBa4BWnSQ0WjTP4RFY-yNSSU6Fsfj17UkPMwxGPO2n3w8elioDgQce4w0t/exec?email=${userEmail}`)
-                .then(response => response.json())
-                .then(data => {
-                  console.log(data); // data will contain: { email: "test@example.com", exists: true/false }
-    
-                  // Check if the email exists in the whitelist
-                  if (data.exists) {
-                    document.getElementById("status").innerHTML = `Welcome, ${user.displayName}!`;
-                    document.getElementById("login-btn").style.display = 'none'; // Hide login button
-                    // If whitelisted, redirect to the member page
-                    window.location.href = 'dashboard.html';
+          async function signInWithGoogle() {
+          const provider = new firebase.auth.GoogleAuthProvider();
+          try {
+            const result = await firebase.auth().signInWithPopup(provider);
+            const user = result.user;
+            const token = await user.getIdToken();
+            const email = user.email;
 
-                  } else {
-                    // If not whitelisted, sign out
-                    alert("Access Denied: Your email is not whitelisted.");
-                    auth.signOut().then(() => {
-                      document.getElementById("status").innerHTML = "You have been logged out.";
-                    });
-                  }
-                })
-                .catch(error => {
-                  console.error('Error during API call:', error);
-                  alert("An error occurred while checking the whitelist.");
-                });
-              })
-              .catch((error) => {
-                console.error('Error during Google Sign-In:', error);
-                alert("An error occurred during sign-in. Please try again.");
-              });
-          };
-          
-          // Sign out function
-          window.signOut = function () {
-            firebase.auth().signOut().then(() => {
-              document.getElementById("status").innerHTML = "You have signed out.";
-              document.getElementById("login-btn").style.display = 'block'; // Show login button
-            }).catch((error) => {
-              console.error("Error signing out: ", error.message);
+            const scriptUrl = `https://script.google.com/macros/s/AKfycbwSKagEfrKtbSBAlFNVRWDlyanu421FRhN6ZGlPj8vi9nOh4Tno2GQ5vBRRADoYrIW0/exec`;
+            //const scriptUrl = `http://localhost:3000/directory`;
+            const res = await fetch(scriptUrl, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ email, token })
             });
+
+            const data = await res.json();
+
+            if (data.exists) {
+              document.getElementById("status").innerHTML = `Welcome, ${user.displayName}!`;
+              document.getElementById("login-btn").style.display = 'none';
+              window.location.href = 'dashboard.html';
+            } else {
+              alert("Access Denied: Your email is not whitelisted.");
+              await firebase.auth().signOut();
+            }
+
+          } catch (error) {
+            console.error("Login failed:", error);
+            alert("Login or verification failed. Please try again.");
           }
-        });
-      </script>
+        }
+
+        window.signInWithGoogle = signInWithGoogle;
+
+        // Sign out function
+        window.signOut = function () {
+          firebase.auth().signOut().then(() => {
+            document.getElementById("status").innerHTML = "You have signed out.";
+            document.getElementById("login-btn").style.display = 'block'; // Show login button
+          }).catch((error) => {
+            console.error("Error signing out: ", error.message);
+          });
+        }
+      });
+    </script>
     
 </body>
 </html>

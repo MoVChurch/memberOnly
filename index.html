@@ -142,7 +142,7 @@
             const token = await user.getIdToken();
             const email = user.email;
 
-            const scriptUrl = `https://script.google.com/macros/s/AKfycbwSKagEfrKtbSBAlFNVRWDlyanu421FRhN6ZGlPj8vi9nOh4Tno2GQ5vBRRADoYrIW0/exec`;
+            const scriptUrl = `https://script.google.com/macros/s/AKfycbwpS6iTjmOHE8QxDv-hC27wXZMgOMCEnTqhhFSWAjVAHvB2a58EMJfJ4V2xLxJljLQ/exec`;
             //const scriptUrl = `http://localhost:3000/directory`;
             const res = await fetch(scriptUrl, {
               method: 'POST',

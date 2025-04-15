@@ -142,14 +142,22 @@
             const token = await user.getIdToken();
             const email = user.email;
 
-            const scriptUrl = `https://script.google.com/macros/s/AKfycbwpS6iTjmOHE8QxDv-hC27wXZMgOMCEnTqhhFSWAjVAHvB2a58EMJfJ4V2xLxJljLQ/exec`;
+            const scriptUrl = `https://script.google.com/macros/s/AKfycbzSc_dI1le_suS3DGjM14RGMTISjFI5WkzqTRqDCLbN-6xV9OYNeHdN0H85uWbWBAuv/exec`;
             //const scriptUrl = `http://localhost:3000/directory`;
+            // const res = await fetch(scriptUrl, {
+            //   method: 'POST',
+            //   headers: { 'Content-Type': 'application/json' },
+            //   body: JSON.stringify({ email, token })
+            // });
+            // logic to avoid preFlight as its not supported in GAS.
             const res = await fetch(scriptUrl, {
               method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ email, token })
+              headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+              },
+              body: new URLSearchParams({ email, token })
             });
-
+            console.log("-----###-----",res);
             const data = await res.json();
 
             if (data.exists) {

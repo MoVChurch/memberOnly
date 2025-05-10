@@ -155,7 +155,7 @@
             const data = await res.json();
             console.log("-----###-----", data);
 
-            if (data.exists) {
+            if (data.whitelisted) {
               document.getElementById("status").innerHTML = `Welcome, ${user.displayName}!`;
               document.getElementById("login-btn").style.display = 'none';
               window.location.href = 'dashboard.html';

@@ -20,6 +20,31 @@
             margin: 0;
             background: radial-gradient(circle at top, #d4a8ff, #a889e6, #6a63c9, #4942a5, #232144);
         }
+        .loading-area {
+          text-align: center;
+          margin-top: 1em;
+          font-weight: bold;
+        }
+        .welcome-message {
+          margin-top: 1em;
+          text-align: center;
+          font-weight: bold;
+          color: #333;
+        }
+        .spinner {
+          width: 24px;
+          height: 24px;
+          border: 3px solid #ccc;
+          border-top: 3px solid #4285f4;
+          border-radius: 50%;
+          animation: spin 0.7s linear infinite;
+          margin: 0 auto 10px;
+        }
+
+        @keyframes spin {
+          0% { transform: rotate(0); }
+          100% { transform: rotate(360deg); }
+        }
         .login-card {
             background-color: rgb(219, 182, 88);
             border-radius: 10px;
@@ -78,6 +103,12 @@
           <img src="assets/img/g-logo.png" alt="Google Logo" width="20" class="me-2">
           Sign in with Google
         </button> 
+
+        <!-- Loading Spinner + Message -->
+        <div id="loading" class="loading-area" style="display: none;">
+          <div class="spinner"></div>
+          <p>Please wait... verifying your access</p>
+        </div>
   
       </div>        
       <div id="status" class="welcome-message"></div>
@@ -133,45 +164,50 @@
           const auth = firebase.auth();
           const provider = new firebase.auth.GoogleAuthProvider();
     
-          // Sign-in function using Firebase Google Auth
-          async function signInWithGoogle() {
-          const provider = new firebase.auth.GoogleAuthProvider();
-          try {
-            const result = await firebase.auth().signInWithPopup(provider);
-            const user = result.user;
-            const token = await user.getIdToken();
-            const email = user.email;
+          document.getElementById("login-btn").onclick = async function () {
+              const statusEl = document.getElementById("status");
+              const loadingEl = document.getElementById("loading");
+              const loginBtn = document.getElementById("login-btn");
 
-            const netlifyFunctionUrl = 'https://movfirebaseauth.netlify.app/.netlify/functions/checkWhitelist';
+              statusEl.innerText = '';
+              loginBtn.disabled = true;
+              loadingEl.style.display = 'block';
 
-            const res = await fetch(netlifyFunctionUrl, {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-              },
-              body: JSON.stringify({ email })
-            });
+              try {
+                const result = await auth.signInWithPopup(provider);
+                const user = result.user;
+                const email = user.email;
 
-            const data = await res.json();
-            console.log("-----###-----", data);
+                const netlifyFunctionUrl = 'https://movfirebaseauth.netlify.app/.netlify/functions/checkWhitelist';
 
-            if (data.whitelisted) {
-              document.getElementById("status").innerHTML = `Welcome, ${user.displayName}!`;
-              document.getElementById("login-btn").style.display = 'none';
-              window.location.href = 'dashboard.html';
-            } else {
-              document.getElementById("status").innerHTML = `Access denied: Your email is not whitelisted.`;
-              alert("Access Denied: Your email is not whitelisted.");
-              await firebase.auth().signOut();
-            }
+                const res = await fetch(netlifyFunctionUrl, {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ email })
+                });
 
-          } catch (error) {
-            console.error("Login failed:", error);
-            alert("Login or verification failed. Please try again.");
-          }
-        }
+                const data = await res.json();
+                loadingEl.style.display = 'none';
 
-        window.signInWithGoogle = signInWithGoogle;
+                if (data.whitelisted) {
+                  statusEl.innerHTML = `Welcome, ${user.displayName}! Redirecting...`;
+                  setTimeout(() => {
+                    window.location.href = 'dashboard.html';
+                  }, 1000);
+                } else {
+                  statusEl.innerHTML = `Access denied: Your email is not whitelisted.`;
+                  alert("Access Denied: Your email is not whitelisted.");
+                  await auth.signOut();
+                  loginBtn.disabled = false;
+                }
+              } catch (error) {
+                loadingEl.style.display = 'none';
+                loginBtn.disabled = false;
+                console.error("Login failed:", error);
+                alert("Login or verification failed. Please try again.");
+                statusEl.innerText = '';
+              }
+            };
 
         // Sign out function
         window.signOut = function () {

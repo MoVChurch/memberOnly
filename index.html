@@ -142,13 +142,12 @@
             const token = await user.getIdToken();
             const email = user.email;
 
-            const netlifyFunctionUrl = 'http://movfirebaseauth.netlify.app/.netlify/functions/verify-user';
+            const netlifyFunctionUrl = 'http://movfirebaseauth.netlify.app/.netlify/functions/checkWhitelist';
 
             const res = await fetch(netlifyFunctionUrl, {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
               },
               body: JSON.stringify({ email })
             });

@@ -58,36 +58,9 @@
 }
 
 /*--------------------------------------------------------------
-# General Styling & Shared Classes
+# Login Page Classes
 --------------------------------------------------------------*/
-body {
-  color: var(--default-color);
-  background-color: var(--background-color);
-  font-family: var(--default-font);
-}
-
-a {
-  color: var(--accent-color);
-  text-decoration: none;
-  transition: 0.3s;
-}
-
-a:hover {
-  color: color-mix(in srgb, var(--accent-color), transparent 25%);
-  text-decoration: none;
-}
-
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-  color: var(--heading-color);
-  font-family: var(--heading-font);
-}
-
-body, html {
+body.special-loginpage {
   height: 100%;
   margin: 0;
   background: radial-gradient(circle at top, #d4a8ff, #a889e6, #6a63c9, #4942a5, #232144);
@@ -155,12 +128,43 @@ margin: 0 auto 10px;
   width: 200px;
   margin-bottom: 20px;
 }
-.container {
+.login-container {
   display: flex;
   justify-content: center;
   align-items: center;
   height: 100vh;
 }
+
+/*--------------------------------------------------------------
+# General Styling & Shared Classes
+--------------------------------------------------------------*/
+body {
+  color: var(--default-color);
+  background-color: var(--background-color);
+  font-family: var(--default-font);
+}
+
+a {
+  color: var(--accent-color);
+  text-decoration: none;
+  transition: 0.3s;
+}
+
+a:hover {
+  color: color-mix(in srgb, var(--accent-color), transparent 25%);
+  text-decoration: none;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  color: var(--heading-color);
+  font-family: var(--heading-font);
+}
+
 /* PHP Email Form Messages
 ------------------------------*/
 .php-email-form .error-message {

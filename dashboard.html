@@ -73,15 +73,19 @@
        <!-- <img src="assets/img/hero-bg-light.JPG" alt=""> -->
       </div>
       <div class="container text-center">
-        <div class="d-flex flex-column justify-content-center align-items-center">
+        <div class="d-flex flex-column justify-content-center align-items-center gap-3">
            <h1 data-aos="fade-up" >Mother of Victory <span>SHRINE</span></h1>
-           <p data-aos="fade-up" id="welcome-message" data-aos-delay="100">Welcomes You<br></p>
-          <div class="d-flex" data-aos="fade-up" data-aos-delay="200">
-            <a href="directory.html" class="btn-get-started">Family Directory</a>
-          </div><br>
-          <div class="d-flex" data-aos="fade-up" data-aos-delay="200">
-            <a href="member.html" class="btn-get-started">My Details</a>
-          </div>
+           <p id="welcome-message" data-aos="fade-up" data-aos-delay="100">
+            Welcomes You
+          </p>
+      
+          <a href="directory.html" class="btn-get-started" data-aos="fade-up" data-aos-delay="200" aria-label="Go to Family Directory">
+            Family Directory
+          </a>
+      
+          <a href="member.html" class="btn-get-started" data-aos="fade-up" data-aos-delay="300" aria-label="Go to My Details">
+            My Details
+          </a>
           
         </div>
       </div>
@@ -128,30 +132,31 @@
       };
       firebase.initializeApp(firebaseConfig);
       const auth = firebase.auth();
+      const welcomeMessage = document.getElementById('welcome-message');
 
       // Check if the user is authenticated
-      firebase.auth().onAuthStateChanged(function (user) {
-          if (user) {
-              // If the user is logged in, show the dashboard content
-              // You can also retrieve user details if necessary (user.displayName, user.email)
-              const welcomeMessage = document.getElementById('welcome-message');
-              const userName = user.displayName || user.email; // Use displayName if available, else fallback to email
-              //Store email for use in directory.html
-              localStorage.setItem("userEmail", user.email);
-              welcomeMessage.textContent = `Welcomes ${userName}`;
-          } else {
+      auth.onAuthStateChanged(user => {
+          if (!user) {
               // If no user is logged in, redirect to login page
               window.location.href = 'index.html';
+              return;
           }
+          // If the user is logged in, show the dashboard content
+          // You can also retrieve user details if necessary (user.displayName, user.email)
+          
+          const userName = user.displayName || user.email; // Use displayName if available, else fallback to email
+          //Store email for use in directory.html
+          localStorage.setItem("userEmail", user.email);
+          welcomeMessage.textContent = `Welcomes ${userName}`;
       });
        // Logout function
     function logout() {
-        firebase.auth().signOut().then(() => {
-            localStorage.removeItem("userEmail");
-            window.location.href = 'index.html';
-        }).catch((error) => {
-            console.error('Logout error:', error);
-        });
+      auth.signOut()
+        .then(() => {
+          localStorage.removeItem("userEmail");
+          window.location.href = 'index.html';
+        })
+        .catch(err => console.error('Logout error:', err));
     }
   </script>
 

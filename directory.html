@@ -139,7 +139,7 @@
       <div class="spinner-border text-primary" role="status">
           <span class="visually-hidden">Loading...</span>
       </div>
-      <p>Please hang on while we load the data...</p>
+      <p id="loadingText">Please hang on while we load the data...</p>
     </div>
 
 
@@ -258,6 +258,7 @@
           const url = `https://script.google.com/macros/s/AKfycbzrJDgxEE-f1O7onTOrUx3X1Gai6T_DhrBIgLqyI_MaiaevGMjSv0I62J_kXGeFbbUt/exec?idToken=${idToken}`;
           const response = await fetch(url);
           const data = await response.json();
+          //console.log("Fetched data:", data);
           
           const userPermission = data.accessLevel;
           if(userPermission == 'Individual'){

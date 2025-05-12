@@ -142,6 +142,7 @@
       <p id="loadingText">Please hang on while we load the data...</p>
     </div>
 
+    <div id="accessDeniedMessage" class="alert alert-warning text-center" style="display: none;"></div>
 
     </section><!-- /Starter Section Section -->
 
@@ -262,15 +263,18 @@
           
           const userPermission = data.accessLevel;
           if(userPermission == 'Individual'){
+            // Hide loading section completely
+              document.getElementById("loadingMessage").style.display = "none";
+
             // Show access denied message
-            document.getElementById("loadingText").innerHTML = `
+            const errorDiv = document.getElementById("accessDeniedMessage");
+            errorDiv.innerHTML = `
               <strong>Access Denied:</strong> You do not have permission to access the Family Directory yet.<br>
               Please wait a few more days or until further notice from the Church Community WhatsApp Group.
             `;
-            // Hide only the spinner, keep the message
-            document.querySelector("#loadingMessage .spinner-border").style.display = "none";
-            return;
+            errorDiv.style.display = "block";
 
+            return;
           }
           else{
             families = data.families;

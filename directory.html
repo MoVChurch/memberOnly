@@ -255,11 +255,10 @@
 
       showLoading();
       try {
-          const url = `https://script.google.com/macros/s/AKfycbwqnFHZZ7N36t0e2-1KqFLJi-lXRjX5_QP1LsMLziHJu59FsYbvQWyzTSZFB3hUYgfQ/exec?idToken=${idToken}`;
+          const url = `https://script.google.com/macros/s/AKfycbyQhzYfRiGimIYZfYeshmI0vvaQ_dEW_RYny20OSQtpFY0fAmQLHAhetQB6DLidWFkd/exec?idToken=${idToken}`;
           const response = await fetch(url);
           const data = await response.json();
           families = data;
-          console.log(families);
           filterByUnitName();
         } catch (err) {
           console.error("Fetch error:", err);

@@ -87,6 +87,80 @@ h6 {
   font-family: var(--heading-font);
 }
 
+body, html {
+  height: 100%;
+  margin: 0;
+  background: radial-gradient(circle at top, #d4a8ff, #a889e6, #6a63c9, #4942a5, #232144);
+}
+.loading-area {
+text-align: center;
+margin-top: 1em;
+font-weight: bold;
+}
+.welcome-message {
+margin-top: 1em;
+text-align: center;
+font-weight: bold;
+color: #333;
+}
+.spinner {
+width: 24px;
+height: 24px;
+border: 3px solid #ccc;
+border-top: 3px solid #4285f4;
+border-radius: 50%;
+animation: spin 0.7s linear infinite;
+margin: 0 auto 10px;
+}
+
+@keyframes spin {
+0% { transform: rotate(0); }
+100% { transform: rotate(360deg); }
+}
+.login-card {
+  background-color: rgb(219, 182, 88);
+  border-radius: 10px;
+  padding: 30px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  text-align: center;
+}
+.login-card h5 {
+  color: black;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+.google-btn {
+  background-color: white;
+  color: #555;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 5px;
+  padding: 10px;
+  width: 100%;
+  text-decoration: none;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  transition: box-shadow 0.3s ease;
+  margin-top: 20px;
+}
+.google-btn:hover {
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+.google-btn img {
+  margin-right: 10px;
+}
+.logo-img {
+  width: 200px;
+  margin-bottom: 20px;
+}
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
 /* PHP Email Form Messages
 ------------------------------*/
 .php-email-form .error-message {

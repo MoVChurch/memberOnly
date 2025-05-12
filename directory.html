@@ -228,7 +228,6 @@
       document.getElementById('loadingMessage').style.display = 'none'; // Hide the spinner
     }
 
-
     // Initialize Firebase
     const firebaseConfig = {
         apiKey: "AIzaSyCOboG8dsoh6MSW3lL_9pY9pB1kUJ35e7U",
@@ -240,84 +239,35 @@
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
 
-    // Check if the user is authenticated
-    firebase.auth().onAuthStateChanged(function (user) {
-        if (user) {
-            // User is authenticated, proceed to load Google Sheets data
-            loadClient();  // Load GAPI client to fetch data
-        } else {
-            // No user is signed in, redirect to login page
-            window.location.href = 'index.html';
-        }
-    });
-
-    // Load Google API client
-    function loadClient() {
-        gapi.load('client', initClient);
-    }
-
-    // Initialize Google Sheets client
-    function initClient() {
-        gapi.client.init({
-            apiKey: 'AIzaSyDoO_nMjQbaUVQgnRCQY9dzMXGw2fnDq_k',  // Replace with your API key
-            discoveryDocs: ["https://sheets.googleapis.com/$discovery/rest?version=v4"]
-        }).then(function () {
-          fetchSecureDirectoryData();
-        }).catch(function (error) {
-            console.log('Error initializing Google Sheets API:', error);
-        });
-    }
-
-    function fetchSecureDirectoryData() {
-        const userEmail = localStorage.getItem("userEmail");
-        if (!userEmail) {
-          alert("User email not found. Please log in again.");
-          window.location.href = "index.html";
-          return;
-        }
-
-        const url = `https://script.google.com/macros/s/AKfycbzbo8k6SBNf7W0gzJGaz6eF6Ow-SAd2zwEXDoAmyHv7ms6ooC2LFVxy8jbxYGZNXN00/exec?email=${userEmail}`;
-        //const url = `http://localhost:3000/directory?email=${userEmail}` ;
-        fetch(url)
-          .then(response => response.json())
-          .then(data => {
-            // Now you can use `data` just like before
-            families = data; // This is already grouped
-            filterByUnitName(); 
-          })
-          .catch(err => {
-            console.error("Fetch error:", err);
-            alert("Unable to fetch directory data. Please try again later.");
-            hideLoading();
-          });
+    // Auth check and fetch directory
+    auth.onAuthStateChanged(async function (user) {
+      if (!user) {
+        window.location.href = 'index.html';
+        return;
       }
 
+      const idToken = sessionStorage.getItem('idToken');
+      if (!idToken) {
+        alert("Session expired. Please log in again.");
+        auth.signOut();
+        return;
+      }
 
-    function groupByFamilyId(data) {
-        const groupedFamilies = {};
-        data.forEach(row => {
-            const familyId = row[1]; // Family ID column
-            if (!groupedFamilies[familyId]) {
-                groupedFamilies[familyId] = {
-                    unitName: row[0],
-                    familyName: row[3],
-                    address: row[14] || '',
-                    members: []
-                };
-            }
-            groupedFamilies[familyId].members.push({
-                name: row[4],
-                relationship: row[6],
-                contactNumber: row[7],
-                dob: row[10],
-                dom: row[11] || '',
-                bloodgrp: row[12] || '',
-                profession: row[13] || '',
-                status: String(row[8]) === '1' ? 'Active' : 'Inactive'
-            });
-        });
-        return Object.values(groupedFamilies);
-    }
+      showLoading();
+      try {
+          const url = `https://script.google.com/macros/s/AKfycbzbo8k6SBNf7W0gzJGaz6eF6Ow-SAd2zwEXDoAmyHv7ms6ooC2LFVxy8jbxYGZNXN00/exec?idToken=${idToken}`;
+          const response = await fetch(url);
+          const data = await response.json();
+          families = data;
+          console.log(families);
+          filterByUnitName();
+        } catch (err) {
+          console.error("Fetch error:", err);
+          alert("Unable to fetch directory data. Please try again later.");
+        } finally {
+          hideLoading();
+        }
+      });
 
     // Function to filter by unit name
     function filterByUnitName() {
@@ -325,8 +275,6 @@
         document.getElementById('searchInput').value = '';
 
         const unitNameValue = document.getElementById('unitNameDropdown').value;
-        showLoading(); // Show loading spinner when data is being processed
-
         // If "Select All" is selected, show all families
         if (unitNameValue === "all") {
             filteredByUnit = families;
@@ -339,8 +287,6 @@
         currentPage = 1;
         renderPagination(filteredFamilies.length);
         displayFamilies();
-
-        hideLoading(); // Hide loading spinner once data is ready
     }
 
     // Function to search by first name or family name based on the toggle selection
@@ -442,9 +388,11 @@
     // Show family details in a modal
     function showFamilyDetails(familyIndex) {
         const family = filteredFamilies[familyIndex];
+        const movAge = family.mov_age || 'Not Available';
         let modalContent = `
             <p><strong>Unit Name:</strong> ${family.unitName}</p>
             <p><strong>Family Name:</strong> ${family.familyName}</p>
+            <p><strong>MoV Joining:</strong> ${mov_age}</p>
             <p><strong>Address:</strong> ${family.address}</p>
             <div class="table-responsive"> 
             <table class="table table-bordered">
@@ -482,18 +430,13 @@
 
     // Logout function
     function logout() {
-        firebase.auth().signOut().then(() => {
-            localStorage.removeItem("userEmail");
-            window.location.href = 'index.html';
-        }).catch((error) => {
-            console.error('Logout error:', error);
-        });
+      auth.signOut()
+        .then(() => {
+          localStorage.removeItem("userEmail");
+          window.location.href = 'index.html';
+        })
+        .catch(err => console.error('Logout error:', err));
     }
 </script>
-   
-
-<script async src="https://apis.google.com/js/api.js"></script>
-
 </body>
-
 </html>

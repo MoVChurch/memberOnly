@@ -111,12 +111,14 @@
                   headers: { 'Content-Type': 'application/json' },
                   body: JSON.stringify({ idToken })
                 });
-
+                
                 const data = await res.json();
                 loadingEl.style.display = 'none';
 
                 if (data.whitelisted) {
                   //statusEl.innerHTML = `Welcome, ${user.displayName}! Redirecting...`;
+                  // Store the token temporarily for next page (cleared on tab close)
+                  sessionStorage.setItem('idToken', idToken);
                   setTimeout(() => {
                     window.location.href = 'dashboard.html';
                   }, 1000);

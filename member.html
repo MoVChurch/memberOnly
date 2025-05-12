@@ -121,15 +121,6 @@
 <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-auth-compat.js"></script>
 <script src="https://apis.google.com/js/api.js"></script>
 <script>
-    
-    // Function to hide the loading spinner
-    function hideLoading() {
-      //console.log('Hiding loading spinner...');  
-      document.getElementById('loadingMessage').style.display = 'none';
-      document.getElementById('family-details-content').style.display = 'block';
-    }
-
-
     // Initialize Firebase
     const firebaseConfig = {
         apiKey: "AIzaSyCOboG8dsoh6MSW3lL_9pY9pB1kUJ35e7U",
@@ -141,66 +132,60 @@
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
 
-    // Check if the user is authenticated
-    firebase.auth().onAuthStateChanged(function (user) {
-        if (user) {
-            // User is authenticated, proceed to load Google Sheets data
-            loadClient();  // Load GAPI client to fetch data
-        } else {
-            // No user is signed in, redirect to login page
-            window.location.href = 'index.html';
-        }
-    });
-
-    // Load Google API client
-    function loadClient() {
-        gapi.load('client', initClient);
+    // Spinner and display handling
+    function showLoading() {
+      document.getElementById('loadingMessage').style.display = 'block';
+      document.getElementById('family-details-content').style.display = 'none';
     }
 
-    // Initialize Google Sheets client
-    function initClient() {
-        gapi.client.init({
-            apiKey: 'AIzaSyDoO_nMjQbaUVQgnRCQY9dzMXGw2fnDq_k',  // Replace with your API key
-            discoveryDocs: ["https://sheets.googleapis.com/$discovery/rest?version=v4"]
-        }).then(function () {
-          fetchSecureDirectoryData();
-        }).catch(function (error) {
-            console.log('Error initializing Google Sheets API:', error);
-        });
+    function hideLoading() {
+      document.getElementById('loadingMessage').style.display = 'none';
+      document.getElementById('family-details-content').style.display = 'block';
     }
 
-    function fetchSecureDirectoryData() {
-        const userEmail = localStorage.getItem("userEmail");
-        if (!userEmail) {
-          alert("User email not found. Please log in again.");
-          window.location.href = "index.html";
-          return;
-        }
-
-        const url = `https://script.google.com/macros/s/AKfycbzbo8k6SBNf7W0gzJGaz6eF6Ow-SAd2zwEXDoAmyHv7ms6ooC2LFVxy8jbxYGZNXN00/exec?email=${userEmail}`;
-        //const url = `http://localhost:3000/directory?email=${userEmail}` ;
-        fetch(url)
-          .then(response => response.json())
-          .then(data => {
-            if (Array.isArray(data) && data.length > 0) {
-              showFamilyDetails(data[0]); // First family, or loop if needed
-            } else {
-              alert("No family data found.");
-            }
-          })
-          .catch(err => {
-            console.error("Fetch error:", err);
-            alert("Unable to fetch member data. Please try again later.");
-           })
-            .finally(() => {
-                hideLoading(); // Now runs in ALL cases
-            });
+    // Auth and token-based fetch
+    auth.onAuthStateChanged(async function (user) {
+      if (!user) {
+        window.location.href = 'index.html';
+        return;
       }
 
-    // Show family details in a modal
+      try {
+        const idToken = await user.getIdToken();
+        fetchMemberData(idToken);
+      } catch (err) {
+        console.error("Token error:", err);
+        alert("Unable to verify user. Please try logging in again.");
+        auth.signOut();
+      }
+    });
+
+    async function fetchMemberData(idToken) {
+      showLoading();
+
+      const url = `https://script.google.com/macros/s/AKfycbzrJDgxEE-f1O7onTOrUx3X1Gai6T_DhrBIgLqyI_MaiaevGMjSv0I62J_kXGeFbbUt/exec?idToken=${idToken}`;
+
+      try {
+        const response = await fetch(url);
+        const data = await response.json();
+
+        if (Array.isArray(data?.families) && data.families.length > 0) {
+          showFamilyDetails(data.families[0]); // Assuming single family for individual access
+        } else {
+          document.getElementById('family-details-content').innerHTML = `
+            <div class="alert alert-warning text-center">No family data found.</div>`;
+        }
+      } catch (err) {
+        console.error("Fetch error:", err);
+        document.getElementById('family-details-content').innerHTML = `
+          <div class="alert alert-danger text-center">Unable to fetch member data. Please try again later.</div>`;
+      } finally {
+        hideLoading();
+      }
+    }
+
     function showFamilyDetails(family) {
-      
-      const membersTable = family.members.map(member => `
+      const membersHTML = family.members.map(member => `
         <tr>
           <td>${member.name}</td>
           <td>${member.relationship}</td>
@@ -209,8 +194,10 @@
           <td>${member.bloodgrp}</td>
           <td>${member.profession}</td>
           <td>${member.contactNumber}</td>
-        </tr>
-      `).join('');
+        </tr>`).join('');
+
+      // Calculate age from mov_age date
+      const ageText = formatMovAge(family.mov_age);
 
       const html = `
         <div class="card">
@@ -218,6 +205,7 @@
             <h5 class="mb-0">${family.unitName} - ${family.familyName}</h5>
           </div>
           <div class="card-body">
+            <p><strong>MoV Joining:</strong> ${ageText}</p>
             <p><strong>Address:</strong> ${family.address}</p>
             <div class="table-responsive">
               <table class="table table-bordered table-striped">
@@ -232,29 +220,45 @@
                     <th>Cell No.</th>
                   </tr>
                 </thead>
-                <tbody>${membersTable}</tbody>
+                <tbody>${membersHTML}</tbody>
               </table>
             </div>
           </div>
         </div>`;
-      
+
       document.getElementById('family-details-content').innerHTML = html;
     }
 
-    // Logout function
+    function formatMovAge(dateStr) {
+      if (!dateStr) return 'Not Available';
+
+      const joinDate = new Date(dateStr);
+      const now = new Date();
+
+      const years = now.getFullYear() - joinDate.getFullYear();
+      const months = now.getMonth() - joinDate.getMonth();
+      const adjustedYears = months < 0 ? years - 1 : years;
+
+      const monthNames = [
+        "JAN", "FEB", "MAR", "APR", "MAY", "JUN",
+        "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"
+      ];
+
+      if (adjustedYears < 1) {
+        return `${monthNames[joinDate.getMonth()]} ${joinDate.getFullYear()}`;
+      } else {
+        return `${adjustedYears} ${adjustedYears === 1 ? 'year' : 'years'}`;
+      }
+    }
+    // Logout
     function logout() {
-        firebase.auth().signOut().then(() => {
-            localStorage.removeItem("userEmail");
-            window.location.href = 'index.html';
-        }).catch((error) => {
-            console.error('Logout error:', error);
-        });
+      auth.signOut()
+        .then(() => {
+          localStorage.removeItem("userEmail");
+          window.location.href = 'index.html';
+        })
+        .catch(error => console.error('Logout error:', error));
     }
 </script>
-   
-
-<script async src="https://apis.google.com/js/api.js"></script>
-
 </body>
-
 </html>

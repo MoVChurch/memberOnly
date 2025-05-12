@@ -255,11 +255,27 @@
 
       showLoading();
       try {
-          const url = `https://script.google.com/macros/s/AKfycbyQhzYfRiGimIYZfYeshmI0vvaQ_dEW_RYny20OSQtpFY0fAmQLHAhetQB6DLidWFkd/exec?idToken=${idToken}`;
+          const url = `https://script.google.com/macros/s/AKfycbzrJDgxEE-f1O7onTOrUx3X1Gai6T_DhrBIgLqyI_MaiaevGMjSv0I62J_kXGeFbbUt/exec?idToken=${idToken}`;
           const response = await fetch(url);
           const data = await response.json();
-          families = data;
-          filterByUnitName();
+          
+          const userPermission = data.accessLevel;
+          if(userPermission == 'Individual'){
+            // Show access denied message
+            document.getElementById("loadingText").innerHTML = `
+              <strong>Access Denied:</strong> You do not have permission to access the Family Directory yet.<br>
+              Please wait a few more days or until further notice from the Church Community WhatsApp Group.
+            `;
+            // Hide only the spinner, keep the message
+            document.querySelector("#loadingMessage .spinner-border").style.display = "none";
+            return;
+
+          }
+          else{
+            families = data.families;
+            filterByUnitName();
+          }
+          
         } catch (err) {
           console.error("Fetch error:", err);
           alert("Unable to fetch directory data. Please try again later.");

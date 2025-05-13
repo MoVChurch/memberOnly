@@ -2023,5 +2023,52 @@ section,
 # Starter Section Section
 --------------------------------------------------------------*/
 .starter-section {
-  /* Add your styles here */
+  .service-item {
+    background-color: var(--surface-color);
+    border: 1px solid color-mix(in srgb, var(--default-color), transparent 85%);
+    height: 100%;
+    padding: 30px;
+    transition: 0.3s;
+    border-radius: 10px;
+    display: flex;
+  }
+  
+  .service-item .icon {
+    font-size: 32px;
+    border-radius: 10px;
+    position: relative;
+    margin-right: 25px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 72px;
+    height: 72px;
+    flex-shrink: 0;
+  }
+  
+  .service-item h3 {
+    color: color-mix(in srgb, var(--heading-color), transparent 25%);
+    font-weight: 700;
+    font-size: 22px;
+    transition: 0.3s;
+  }
+  
+  .service-item p {
+    margin-bottom: 0;
+    color: color-mix(in srgb, var(--default-color), transparent 40%);
+    transition: 0.3s;
+  }
+  
+  .service-item.item-orange .icon {
+    color: #fd7e14;
+    border: 1px solid #fd7e14;
+    background: rgba(253, 126, 20, 0.1);
+  }
+  .service-item:hover h3 {
+    color: var(--heading-color);
+  }
+  
+  .service-item:hover p {
+    color: color-mix(in srgb, var(--default-color), transparent 10%);
+  }
 }

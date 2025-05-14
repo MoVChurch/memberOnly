@@ -226,10 +226,11 @@
 
         if (photo && photo.startsWith("https://res.cloudinary.com/")) {
             html += `
-                <p><strong style="display: inline;>Family Photo:</strong></p>
-                <a href="${photo}" class="glightbox" data-type="image" style="display: inline;">
-                    Click here to view the Family Photo
-                </a>
+                <p><strong>Family Photo: </strong>
+                  <a href="${photo}" class="glightbox" data-type="image">
+                      Click here to view the Family Photo
+                  </a>
+                </p>
             `;
         }
 

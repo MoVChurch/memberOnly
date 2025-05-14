@@ -256,7 +256,7 @@
 
       showLoading();
       try {
-          const url = `https://script.google.com/macros/s/AKfycbzrJDgxEE-f1O7onTOrUx3X1Gai6T_DhrBIgLqyI_MaiaevGMjSv0I62J_kXGeFbbUt/exec?idToken=${idToken}`;
+          const url = `https://script.google.com/macros/s/AKfycbyqipcykrViRhzqth_NT5A-_CZ8wVSvaJqJQnagB2m3b-zZx9eAqSH86ZApvURvJEPl/exec?idToken=${idToken}`;
           const response = await fetch(url);
           const data = await response.json();
           //console.log("Fetched data:", data);
@@ -409,11 +409,27 @@
     function showFamilyDetails(familyIndex) {
         const family = filteredFamilies[familyIndex];
         const movAge = family.mov_age || 'Not Available';
+        const photo = family.familyPhoto;
+        
         let modalContent = `
             <p><strong>Unit Name:</strong> ${family.unitName}</p>
             <p><strong>Family Name:</strong> ${family.familyName}</p>
             <p><strong>MoV Joining:</strong> ${movAge}</p>
             <p><strong>Address:</strong> ${family.address}</p>
+        `;
+
+        if (photo && photo.startsWith("https://res.cloudinary.com/")) {
+            modalContent += `
+                <p><strong>Family Photo:</strong></p>
+                <a href="${photo}" class="glightbox" data-type="image" data-title="Family Photo">
+                    <img src="${photo}" alt="Family Photo" 
+                    style="max-width: 100%; height: auto; margin-bottom: 15px; border: 1px solid #ccc; 
+                           border-radius: 4px;" oncontextmenu="return false;">
+                </a>
+            `;
+        }
+
+        modalContent += `
             <div class="table-responsive"> 
             <table class="table table-bordered">
                 <thead>
@@ -444,6 +460,14 @@
           </div>
         `;
         document.getElementById('family-details-content').innerHTML = modalContent;
+        const lightbox = GLightbox({
+            selector: '.glightbox',
+            zoomable: false,
+            draggable: false,
+            touchNavigation: true,
+            openEffect: 'zoom',
+            closeEffect: 'fade'
+        });
         var familyDetailsModal = new bootstrap.Modal(document.getElementById('familyDetailsModal'));
         familyDetailsModal.show();
     }

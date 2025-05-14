@@ -423,10 +423,8 @@
         if (photo && photo.startsWith("https://res.cloudinary.com/")) {
             modalContent += `
                 <p><strong>Family Photo:</strong></p>
-                <a href="${photo}" class="glightbox" data-type="image" data-title="Family Photo">
-                    <img src="${photo}" alt="Family Photo" 
-                    style="max-width: 100%; height: auto; margin-bottom: 15px; border: 1px solid #ccc; 
-                           border-radius: 4px;" oncontextmenu="return false;">
+                <a href="${photo}" class="glightbox" data-type="image">
+                    Click here to view the Family Photo
                 </a>
             `;
         }

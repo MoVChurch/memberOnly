@@ -225,9 +225,9 @@
             `;
 
         if (photo && photo.startsWith("https://res.cloudinary.com/")) {
-            modalContent += `
+            html += `
                 <p><strong>Family Photo:</strong></p>
-                <a href="${photo}" class="glightbox" data-type="image" data-title="Family Photo">
+                <a href="${photo}" class="glightbox" data-type="image">
                     Click here to view the Family Photo
                 </a>
             `;

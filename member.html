@@ -214,7 +214,7 @@
       const ageText = formatMovAge(family.mov_age);
       const photo = family.familyPhoto;
 
-      const html = `
+      let html = `
         <div class="card">
           <div class="card-header bg-warning text-white">
             <h5 class="mb-0">${family.unitName} - ${family.familyName}</h5>
@@ -226,8 +226,8 @@
 
         if (photo && photo.startsWith("https://res.cloudinary.com/")) {
             html += `
-                <p><strong>Family Photo:</strong></p>
-                <a href="${photo}" class="glightbox" data-type="image">
+                <p><strong style="display: inline;>Family Photo:</strong></p>
+                <a href="${photo}" class="glightbox" data-type="image" style="display: inline;">
                     Click here to view the Family Photo
                 </a>
             `;

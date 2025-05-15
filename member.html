@@ -46,7 +46,7 @@
         <ul>
           <li><a href="dashboard.html">Home</a></li>
           <li><a href="#">Trustees</a></li>
-          <li><a href="occasion.html">Annual Occasions</a></li>
+          <li><a href="#">Annual Occasions</a></li>
           <li class="dropdown"><a href="#"><span>Associations</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
             <ul>
               <li><a href="#">Choir</a></li>
@@ -174,16 +174,10 @@
     async function fetchMemberData(idToken) {
       showLoading();
 
-      const url = `https://script.google.com/macros/s/AKfycbxwTzsXEkSA-_tKnQG_EMaTO7OkUTgNnaePHnYDbslxFyvM57y3W0GZRUxUVvVSPNYz/exec`;
+      const url = `https://script.google.com/macros/s/AKfycby5K4LWpXr3LzW3F8RmMakYdeaoROXB3_Cq07nvZmvVx5n3A0nWx6BM33Jdgdt4Chrd/exec?idToken=${idToken}`;
 
       try {
-        const response = await fetch(url, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json"
-            },
-            body: JSON.stringify({ idToken }) // secure way to send token
-          });
+        const response = await fetch(url);
         const data = await response.json();
 
         if (Array.isArray(data?.families) && data.families.length > 0) {

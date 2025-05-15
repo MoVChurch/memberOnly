@@ -89,13 +89,10 @@
           <i class="bi bi-broadcast icon"></i>
           <div>
             <h3>EDEN Portal Data</h3>
-            <p>Verify your data. For any correction or updation, email to 
-              <a href="mailto:membersupport@motherofvictory.org?subject=Member.Portal%20Update&body=Please%20list%20only%20the%20information%20that%20needs%20to%20be%20updated%20below%2C%20using%20the%20following%20format%3A%0A%0AThis%20is%20for%20Member%201%20%3A%3A%0A%0AName%3A%09[Updated]%0ARel.%3A%09[Updated]%0AD.O.B%3A%09[Updated]%0AD.O.M%3A%09[Updated]%0ABlood%20Grp%3A%09[Updated]%0AProfession%3A%09[Updated]%0ACell%20No.%3A%09[Updated]">
-              membersupport@motherofvictory.org
-              </a>. Parish priest will update EDEN at the earliest.</p>
+            <p>Verify your data. For any updation, use the button below to send data. Parish priest will update EDEN at the earliest.</p>
           </div>
         </div>
-
+        
         <!-- Family card, hidden by default -->
         <div id="family-details-content" style="display: none;">
           <!-- Content is injected dynamically -->
@@ -252,7 +249,16 @@
               </table>
             </div>
           </div>
-        </div>`;
+        </div>
+          <a 
+            href="https://form.jotform.com/251335565149056" 
+            target="_blank" 
+            rel="noopener noreferrer" 
+            class="btn btn-primary d-block w-100 text-center my-2"
+          >
+            <i class="bi bi-box-arrow-up-right me-2"></i>Update Data
+          </a>
+        `;
 
       document.getElementById('family-details-content').innerHTML = html;
       const lightbox = GLightbox({
@@ -262,7 +268,7 @@
             touchNavigation: true,
             openEffect: 'zoom',
             closeEffect: 'fade'
-        });
+        });          
     }
 
     function formatMovAge(dateStr) {

@@ -174,7 +174,7 @@
     async function fetchMemberData(idToken) {
       showLoading();
 
-      const url = `https://script.google.com/macros/s/AKfycbyqipcykrViRhzqth_NT5A-_CZ8wVSvaJqJQnagB2m3b-zZx9eAqSH86ZApvURvJEPl/exec`;
+      const url = `https://script.google.com/macros/s/AKfycbxwTzsXEkSA-_tKnQG_EMaTO7OkUTgNnaePHnYDbslxFyvM57y3W0GZRUxUVvVSPNYz/exec`;
 
       try {
         const response = await fetch(url, {
@@ -216,6 +216,8 @@
       // Calculate age from mov_age date
       const ageText = formatMovAge(family.mov_age);
       const photo = family.familyPhoto;
+      const prevParish = family.prevParish;
+      const prevDiocese = family.prevDiocese;
 
       let html = `
         <div class="card">
@@ -254,6 +256,7 @@
                 <tbody>${membersHTML}</tbody>
               </table>
             </div>
+            <p><strong>Original Parish, Diocese:</strong> ${prevParish} <i>${prevDiocese}<i></p>
           </div>
         </div>
           <a 

@@ -258,7 +258,7 @@
 
       showLoading();
       try {
-          const url = `https://script.google.com/macros/s/AKfycbyqipcykrViRhzqth_NT5A-_CZ8wVSvaJqJQnagB2m3b-zZx9eAqSH86ZApvURvJEPl/exec`;
+          const url = `https://script.google.com/macros/s/AKfycbxwTzsXEkSA-_tKnQG_EMaTO7OkUTgNnaePHnYDbslxFyvM57y3W0GZRUxUVvVSPNYz/exec`;
           
           const response = await fetch(url, {
             method: "POST",
@@ -418,13 +418,15 @@
     // Show family details in a modal
     function showFamilyDetails(familyIndex) {
         const family = filteredFamilies[familyIndex];
-        const movAge = family.mov_age || 'Not Available';
+        const ageText = formatMovAge(family.mov_age);
         const photo = family.familyPhoto;
+        const prevParish = family.prevParish;
+        const prevDiocese = family.prevDiocese;
         
         let modalContent = `
             <p><strong>Unit Name:</strong> ${family.unitName}</p>
             <p><strong>Family Name:</strong> ${family.familyName}</p>
-            <p><strong>MoV Joining:</strong> ${movAge}</p>
+            <p><strong>MoV Joining:</strong> ${ageText}</p>
             <p><strong>Address:</strong> ${family.address}</p>
         `;
 
@@ -467,6 +469,7 @@
                 </tbody>
             </table>
           </div>
+          <p><strong>Original Parish, Diocese:</strong> ${prevParish} <i>${prevDiocese}<i></p>
         `;
         document.getElementById('family-details-content').innerHTML = modalContent;
         const lightbox = GLightbox({
@@ -481,6 +484,27 @@
         familyDetailsModal.show();
     }
 
+    function formatMovAge(dateStr) {
+      if (!dateStr) return 'Not Available';
+
+      const joinDate = new Date(dateStr);
+      const now = new Date();
+
+      const years = now.getFullYear() - joinDate.getFullYear();
+      const months = now.getMonth() - joinDate.getMonth();
+      const adjustedYears = months < 0 ? years - 1 : years;
+
+      const monthNames = [
+        "JAN", "FEB", "MAR", "APR", "MAY", "JUN",
+        "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"
+      ];
+
+      if (adjustedYears < 1) {
+        return `${monthNames[joinDate.getMonth()]} ${joinDate.getFullYear()}`;
+      } else {
+        return `${adjustedYears} ${adjustedYears === 1 ? 'year' : 'years'}`;
+      }
+    }
     // Logout function
     function logout() {
       auth.signOut()

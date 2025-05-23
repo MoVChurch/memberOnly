@@ -258,7 +258,7 @@
 
       showLoading();
       try {
-          const url = `https://script.google.com/macros/s/AKfycbyM1w1HsIB920_kjnHyU4mrhhgn-VMmNj6wMbowA_t3ruzKMkxdGuy-Wywr6IaVPuG-/exec?idToken=${idToken}`;
+          const url = `https://script.google.com/macros/s/AKfycbx79OE2aw4FNyx_T9u5WrPeaCm2-PtKzIu0qFHe2j3VEcBQxHmuaTYQfaynl5yp0-to/exec?idToken=${idToken}`;
           
           const response = await fetch(url);
           const data = await response.json();
@@ -462,7 +462,7 @@
                 </tbody>
             </table>
           </div>
-          <p><strong>Original Parish, Diocese:</strong> ${prevParish} - <strong><i>${prevDiocese}</i></strong></p>
+          <p><strong>Previous Parish, Diocese:</strong> ${prevParish} - <strong><i>${prevDiocese}</i></strong></p>
         `;
         document.getElementById('family-details-content').innerHTML = modalContent;
         const lightbox = GLightbox({

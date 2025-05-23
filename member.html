@@ -184,12 +184,12 @@
           showFamilyDetails(data.families[0]); // Assuming single family for individual access
         } else {
           document.getElementById('family-details-content').innerHTML = `
-            <div class="alert alert-warning text-center">No family data found.</div>`;
+            <div class="alert alert-warning text-center">No family data found.Contact Achan to get your data entered into Eden.</div>`;
         }
       } catch (err) {
         console.error("Fetch error:", err);
         document.getElementById('family-details-content').innerHTML = `
-          <div class="alert alert-danger text-center">Unable to fetch member data. Please try again later.</div>`;
+          <div class="alert alert-danger text-center">Unable to fetch member data. Contact Achan to get your data entered into Eden.</div>`;
       } finally {
         hideLoading();
       }

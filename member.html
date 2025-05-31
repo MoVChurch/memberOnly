@@ -107,7 +107,7 @@
     <div class="container copyright text-center mt-4">
       <strong class="px-1 sitename">Mother Of Victory Shrine</strong><p>Tikujiniwadi, Thane</p>
       <div class="credits">
-        Developed with <i class="bi bi-heart-fill" style="color: red;"></i> by <strong><a href="https://getitautomated.com" target="_blank" rel="noopener noreferrer">Tom Thomas</a></strong>
+        Developed with <i class="bi bi-heart-fill" style="color: red;"></i> by <strong><a href="https://getitautomated.com" target="_blank" rel="noopener noreferrer">Tom Thomas</a></strong>  (HolyCross Unit) 
       </div>
     </div>
 
@@ -174,14 +174,14 @@
     async function fetchMemberData(idToken) {
       showLoading();
 
-      const url = `https://script.google.com/macros/s/AKfycbx79OE2aw4FNyx_T9u5WrPeaCm2-PtKzIu0qFHe2j3VEcBQxHmuaTYQfaynl5yp0-to/exec?idToken=${idToken}`;
+      const url = `https://script.google.com/macros/s/AKfycbxHu9ROEH8nkUAYklFFojug75-JD1J6hrnYwQBrOAAwPg_mwE4PFY7JMfbw45Ge6ro6/exec?idToken=${idToken}`;
 
       try {
         const response = await fetch(url);
         const data = await response.json();
 
-        if (Array.isArray(data?.families) && data.families.length > 0) {
-          showFamilyDetails(data.families[0]); // Assuming single family for individual access
+        if (Array.isArray(data?.myDetails) && data.myDetails.length > 0) {
+          showFamilyDetails(data.myDetails[0]); // Assuming single family for individual access
         } else {
           document.getElementById('family-details-content').innerHTML = `
             <div class="alert alert-warning text-center">No family data found.Contact Achan to get your data entered into Eden.</div>`;

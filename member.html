@@ -180,8 +180,8 @@
         const response = await fetch(url);
         const data = await response.json();
 
-        if (Array.isArray(data?.myDetails) && data.myDetails.length > 0) {
-          showFamilyDetails(data.myDetails[0]); // Assuming single family for individual access
+        if (Array.isArray(data?.families) && data.families.length > 0) {
+          showFamilyDetails(data.families[0]); // Assuming single family for individual access
         } else {
           document.getElementById('family-details-content').innerHTML = `
             <div class="alert alert-warning text-center">No family data found.Contact Achan to get your data entered into Eden.</div>`;

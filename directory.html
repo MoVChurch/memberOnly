@@ -258,7 +258,7 @@
 
       showLoading();
       try {
-          const url = `https://script.google.com/macros/s/AKfycbyH4J3V2idE8b9swSYn5bJbFOxtirZGH6r4q6wQ5XJXh7R6wpAXEdWa__gom8MGTkdZ/exec?idToken=${idToken}`;
+          const url = `https://script.google.com/macros/s/AKfycbzBqLhhTPzeQVAzRcwgd6ifS9J2mNDpbV2GOG5yfJBIYAekNHgZjApEfWEYTkyfytTx/exec?idToken=${idToken}`;
           
           const response = await fetch(url);
           const data = await response.json();
@@ -421,7 +421,6 @@
               <div><strong>Family Name:</strong> ${family.familyName}</div>
               <div><strong>Unit:</strong> ${family.unitName}</div>
             </div>
-            <p><strong>MoV Joining:</strong> ${ageText}</p>
             <p><strong>Address:</strong> ${family.address}</p>
         `;
 

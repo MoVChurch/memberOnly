@@ -174,22 +174,22 @@
     async function fetchMemberData(idToken) {
       showLoading();
 
-      const url = `https://script.google.com/macros/s/AKfycbx79OE2aw4FNyx_T9u5WrPeaCm2-PtKzIu0qFHe2j3VEcBQxHmuaTYQfaynl5yp0-to/exec?idToken=${idToken}`;
+      const url = `https://script.google.com/macros/s/AKfycbyH4J3V2idE8b9swSYn5bJbFOxtirZGH6r4q6wQ5XJXh7R6wpAXEdWa__gom8MGTkdZ/exec?idToken=${idToken}`;
 
       try {
         const response = await fetch(url);
         const data = await response.json();
 
-        if (Array.isArray(data?.families) && data.families.length > 0) {
-          showFamilyDetails(data.families[0]); // Assuming single family for individual access
+        if (Array.isArray(data?.myDetails) && data.myDetails.length > 0) {
+          showFamilyDetails(data.myDetails[0]); // Assuming single family for individual access
         } else {
           document.getElementById('family-details-content').innerHTML = `
-            <div class="alert alert-warning text-center">No family data found.Contact Achan to get your data entered into Eden.</div>`;
+            <div class="alert alert-warning text-center">Your Family data not found. Please visit Achan's office with your Parish Book to complete your registration in Eden.</div>`;
         }
       } catch (err) {
         console.error("Fetch error:", err);
         document.getElementById('family-details-content').innerHTML = `
-          <div class="alert alert-danger text-center">Unable to fetch member data. Contact Achan to get your data entered into Eden.</div>`;
+          <div class="alert alert-danger text-center">Unable to fetch member data. Please visit Achan's office with your Parish Book to complete your registration in Eden.</div>`;
       } finally {
         hideLoading();
       }

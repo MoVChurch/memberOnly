@@ -258,7 +258,7 @@
 
       showLoading();
       try {
-          const url = `https://script.google.com/macros/s/AKfycbx79OE2aw4FNyx_T9u5WrPeaCm2-PtKzIu0qFHe2j3VEcBQxHmuaTYQfaynl5yp0-to/exec?idToken=${idToken}`;
+          const url = `https://script.google.com/macros/s/AKfycbyH4J3V2idE8b9swSYn5bJbFOxtirZGH6r4q6wQ5XJXh7R6wpAXEdWa__gom8MGTkdZ/exec?idToken=${idToken}`;
           
           const response = await fetch(url);
           const data = await response.json();
@@ -417,19 +417,21 @@
         const prevDiocese = family.prevDiocese;
         
         let modalContent = `
-            <p><strong>Unit Name:</strong> ${family.unitName}</p>
-            <p><strong>Family Name:</strong> ${family.familyName}</p>
+            <div class="d-flex justify-content-between mb-2">
+              <div><strong>Family Name:</strong> ${family.familyName}</div>
+              <div><strong>Unit:</strong> ${family.unitName}</div>
+            </div>
             <p><strong>MoV Joining:</strong> ${ageText}</p>
             <p><strong>Address:</strong> ${family.address}</p>
         `;
 
         if (photo && photo.startsWith("https://res.cloudinary.com/")) {
             modalContent += `
-                <p><strong>Family Photo: </strong>
-                  <a href="${photo}" class="glightbox" data-type="image">
-                      Click here to view the Family Photo
-                  </a>
-                </p>
+                <div class="d-flex justify-content-between mb-2">
+                  <div><strong>Family Photo:</strong> <a href="${photo}" class="glightbox" data-type="image">
+                      Click to view Photo</a></div>
+                  <div><strong>MoV Joining:</strong> ${ageText}</div>
+                </div>
             `;
         }
 
@@ -462,7 +464,10 @@
                 </tbody>
             </table>
           </div>
-          <p><strong>Previous Parish, Diocese:</strong> ${prevParish} - <strong><i>${prevDiocese}</i></strong></p>
+          <div class="d-flex justify-content-between mt-3">
+                <div><strong>Previous Parish:</strong> ${prevParish}</div>
+                <div><strong>Previous Diocese:</strong> <i>${prevDiocese}</i></div>
+          </div>
         `;
         document.getElementById('family-details-content').innerHTML = modalContent;
         const lightbox = GLightbox({

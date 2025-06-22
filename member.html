@@ -163,6 +163,21 @@
 
       try {
         const idToken = await user.getIdToken();
+      // Check for cached member data
+        const cached = sessionStorage.getItem('myDetailsData');
+        if (cached) {
+          const data = JSON.parse(cached);
+          if (Array.isArray(data?.myDetails) && data.myDetails.length > 0) {
+            showFamilyDetails(data.myDetails[0]);
+          } else {
+            document.getElementById('family-details-content').innerHTML = `
+              <div class="alert alert-warning text-center">Your Family data not found. Please visit Achan's office with your Parish Book to complete your registration in Eden.</div>`;
+          }
+          return;
+        }
+
+    // If no cache, fetch from backend
+
         fetchMemberData(idToken);
       } catch (err) {
         console.error("Token error:", err);
@@ -179,6 +194,9 @@
       try {
         const response = await fetch(url);
         const data = await response.json();
+
+        // Cache the fetched data
+        sessionStorage.setItem('myDetailsData', JSON.stringify(data));
 
         if (Array.isArray(data?.myDetails) && data.myDetails.length > 0) {
           showFamilyDetails(data.myDetails[0]); // Assuming single family for individual access
@@ -323,6 +341,7 @@
       auth.signOut()
         .then(() => {
           localStorage.removeItem("userEmail");
+          sessionStorage.removeItem("myDetailsData");  // Clear cache on logout
           window.location.href = 'index.html';
         })
         .catch(error => console.error('Logout error:', error));

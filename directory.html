@@ -258,6 +258,17 @@
 
       showLoading();
       try {
+
+          // Check if families data exists in sessionStorage
+          const cachedData = sessionStorage.getItem('familiesData');
+          if (cachedData) {
+            const parsedData = JSON.parse(cachedData);
+            families = parsedData.families;
+            filterByUnitName();  // Proceed with UI rendering
+            hideLoading();
+            return;
+          }
+           // No cache found, fetch from Google Apps Script
           const url = `https://script.google.com/macros/s/AKfycbzBqLhhTPzeQVAzRcwgd6ifS9J2mNDpbV2GOG5yfJBIYAekNHgZjApEfWEYTkyfytTx/exec?idToken=${idToken}`;
           
           const response = await fetch(url);
@@ -280,6 +291,9 @@
             return;
           }
           else{
+            // Store fetched families in sessionStorage
+            sessionStorage.setItem('familiesData', JSON.stringify(data));
+            
             families = data.families;
             filterByUnitName();
           }
@@ -507,6 +521,7 @@
       auth.signOut()
         .then(() => {
           localStorage.removeItem("userEmail");
+          sessionStorage.removeItem("familiesData");  // Clear cache on logout
           window.location.href = 'index.html';
         })
         .catch(err => console.error('Logout error:', err));

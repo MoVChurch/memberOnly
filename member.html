@@ -166,6 +166,7 @@
       // Check for cached member data
         const cached = sessionStorage.getItem('myDetailsData');
         if (cached) {
+          showLoading();
           const data = JSON.parse(cached);
           if (Array.isArray(data?.myDetails) && data.myDetails.length > 0) {
             showFamilyDetails(data.myDetails[0]);
@@ -173,11 +174,11 @@
             document.getElementById('family-details-content').innerHTML = `
               <div class="alert alert-warning text-center">Your Family data not found. Please visit Achan's office with your Parish Book to complete your registration in Eden.</div>`;
           }
+          hideLoading();
           return;
         }
 
-    // If no cache, fetch from backend
-
+      // If no cache, fetch from backend
         fetchMemberData(idToken);
       } catch (err) {
         console.error("Token error:", err);

@@ -45,17 +45,7 @@
       <nav id="navmenu" class="navmenu">
         <ul>
           <li><a href="dashboard.html">Home</a></li>
-          <li><a href="#">Trustees</a></li>
-          <li><a href="#">Annual Occasions</a></li>
-          <li class="dropdown"><a href="#"><span>Associations</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
-            <ul>
-              <li><a href="#">Choir</a></li>
-              <li><a href="#">Catechism</a></li>
-              <li><a href="#">Pithurvedi</a></li>
-              <li><a href="#">Mathrusangam</a></li>
-              <li><a href="#">Parish Council</a></li>
-            </ul>
-          </li>
+          <li><a href="occasion.html">Annual Occasions</a></li>
         </ul>
         <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
       </nav>
@@ -269,7 +259,7 @@
             return;
           }
            // No cache found, fetch from Google Apps Script
-          const url = `https://script.google.com/macros/s/AKfycbzBqLhhTPzeQVAzRcwgd6ifS9J2mNDpbV2GOG5yfJBIYAekNHgZjApEfWEYTkyfytTx/exec?idToken=${idToken}`;
+          const url = `https://script.google.com/macros/s/AKfycbxwcm-GuZRZckXiiZJQUTcGWjJGYTFOdLR3QzleM1hqzvYJU2IE91gj7YIHjDhXxCBX/exec?idToken=${idToken}`;
           
           const response = await fetch(url);
           const data = await response.json();

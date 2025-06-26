@@ -76,7 +76,7 @@
             <!-- Dropdown to select section -->
             <div class="row gy-5">
                 <div class="col-lg-4">
-                    <label for="data-selector">Occasion List:</label>
+                    <label for="data-selector">Occasion:</label>
                     <select id="data-selector" class="form-select" onchange="changeTableData()">
                         <option value="birthday" selected>Birthday</option>
                         <option value="anniversary">Wedding Anniversary</option>
@@ -185,6 +185,9 @@
             anniversaryList = JSON.parse(cachedAnniversaries);
             const selectedValue = document.getElementById('data-selector').value;
             fillDataTable(selectedValue);
+            // Hide spinner
+            document.getElementById('loadingMessage').style.display = 'none';
+
           } else {
             fetchOccasionData(idToken);
           }

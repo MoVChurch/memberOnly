@@ -84,6 +84,14 @@
                 </div>
             </div>
             <p></p>
+               <!-- Loading Spinner -->
+            <div id="loadingMessage" class="text-center" style="display:block;">
+              <!-- Bootstrap spinner -->
+              <div class="spinner-border text-primary" role="status">
+                  <span class="visually-hidden">Loading...</span>
+              </div>
+              <p id="loadingText">Please hang on while we load the data...</p>
+            </div>
             <!-- Occasion Table -->
             <table id="occasion-table" class="table table-bordered">
                 <thead>
@@ -137,6 +145,18 @@
       let birthdayList = [];
       let anniversaryList = [];
 
+      // Function to show the loading spinner
+    function showLoading() {
+        //console.log('Showing loading spinner...');
+        document.getElementById('loadingMessage').style.display = 'block'; // Show the spinner
+    }
+
+    // Function to hide the loading spinner
+    function hideLoading() {
+      //console.log('Hiding loading spinner...');  
+      document.getElementById('loadingMessage').style.display = 'none'; // Hide the spinner
+    }
+
       const firebaseConfig = {
         apiKey: "AIzaSyCOboG8dsoh6MSW3lL_9pY9pB1kUJ35e7U",
         authDomain: "movchurch-400610.firebaseapp.com",
@@ -177,6 +197,9 @@
 
       async function fetchOccasionData(idToken) {
         try {
+          // Show loading spinner
+          document.getElementById('loadingMessage').style.display = 'block';
+          
           const url = `https://script.google.com/macros/s/AKfycbxwcm-GuZRZckXiiZJQUTcGWjJGYTFOdLR3QzleM1hqzvYJU2IE91gj7YIHjDhXxCBX/exec?idToken=${idToken}&section=celeb`;
           const response = await fetch(url);
           const data = await response.json();
@@ -197,6 +220,9 @@
         } catch (err) {
           console.error('Fetch error:', err);
           alert("Unable to fetch occasion data. Please try again later.");
+        } finally {
+          // Hide loading spinner regardless of success or error
+          document.getElementById('loadingMessage').style.display = 'none';
         }
       }
 

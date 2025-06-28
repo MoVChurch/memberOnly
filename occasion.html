@@ -76,6 +76,34 @@
             <!-- Dropdown to select section -->
             <div class="row gy-5">
                 <div class="col-lg-4">
+                  <label for="unit-filter">Unit Name:</label>
+                  <select id="unit-filter" class="form-select" onchange="changeTableData()">
+                      <option value="St. Kuriakose Elias Chavara">St. Chavara</option>
+                      <option value="St. Mother Theresa">St. Mother Theresa</option>
+                      <option value="Holy Cross">Holy Cross</option>
+                      <option value="Holy Family">Holy Family</option>
+                      <option value="Infant Jesus">Infant Jesus</option>
+                      <option value="all" selected>--- All Units ---</option>
+                      <option value="Little Flower">Little Flower</option>
+                      <option value="Our Lady of Perpetual Succour">OLPS</option>
+                      <option value="Our Lady of Lourdes">OLL</option>
+                      <option value="St. Alphonsa">St. Alphonsa</option>
+                      <option value="St. Antony">St. Antony</option>
+                      <option value="St. Francis Assissi">St. Francis Assissi</option>
+                      <option value="St. George">St. George</option>
+                      <option value="St. Joseph">St. Joseph</option>
+                      <option value="St. Jude">St. Jude</option>
+                      <option value="St. Mary’s">St. Mary</option>
+                      <option value="St. Paul">St. Paul</option>
+                      <option value="St. Sebastian">St. Sebastian</option>
+                      <option value="St. Thomas">St. Thomas</option>
+                      <option value="Sacred Heart">Sacred Heart</option>
+                      <option value="St. Peter">St. Peter</option>
+                      <option value="St. Maria Goretti">St. Maria Goretti</option>
+                      <option value="St. John">St. John</option>
+                  </select>
+                </div>
+                <div class="col-lg-4">
                     <label for="data-selector">Occasion:</label>
                     <select id="data-selector" class="form-select" onchange="changeTableData()">
                         <option value="birthday" selected>Birthday</option>
@@ -183,8 +211,8 @@
           if (cachedBirthdays && cachedAnniversaries) {
             birthdayList = JSON.parse(cachedBirthdays);
             anniversaryList = JSON.parse(cachedAnniversaries);
-            const selectedValue = document.getElementById('data-selector').value;
-            fillDataTable(selectedValue);
+            const occasion = document.getElementById('data-selector').value;
+            fillDataTable(occasion);
             // Hide spinner
             document.getElementById('loadingMessage').style.display = 'none';
 
@@ -218,8 +246,8 @@
             sessionStorage.setItem('anniversaryList', JSON.stringify(anniversaryList));
           }
 
-          const selectedValue = document.getElementById('data-selector').value;
-          fillDataTable(selectedValue);
+          const occasion = document.getElementById('data-selector').value;
+          fillDataTable(occasion);
         } catch (err) {
           console.error('Fetch error:', err);
           alert("Unable to fetch occasion data. Please try again later.");
@@ -233,13 +261,20 @@
         const tableBody = document.getElementById('occasion-table').getElementsByTagName('tbody')[0];
         tableBody.innerHTML = '';
 
+        const unitFilter = document.getElementById('unit-filter').value;
         const data = occasion === 'birthday' ? birthdayList : anniversaryList;
-        if (data.length === 0) {
+
+        // Apply unit filter
+        const filteredData = unitFilter === 'all'
+          ? data
+          : data.filter(row => row[2] === unitFilter); // row[2] = unit name
+
+        if (filteredData.length === 0) {
           const tr = tableBody.insertRow();
           tr.innerHTML = `<td colspan="3" class="text-center">No records found</td>`;
         }
         else{
-            data.forEach(row => {
+            filteredData.forEach(row => {
             const tr = tableBody.insertRow();
             tr.innerHTML = `<td>${row[0]}</td><td>${row[1]}</td><td>${row[2]}</td>`;
           });
@@ -249,8 +284,8 @@
       }
 
       function changeTableData() {
-        const selectedValue = document.getElementById('data-selector').value;
-        fillDataTable(selectedValue);
+        const occasion = document.getElementById('data-selector').value;
+        fillDataTable(occasion);
       }
 
       function logout() {

@@ -259,7 +259,7 @@
             return;
           }
            // No cache found, fetch from Google Apps Script
-          const url = `https://script.google.com/macros/s/AKfycbxwcm-GuZRZckXiiZJQUTcGWjJGYTFOdLR3QzleM1hqzvYJU2IE91gj7YIHjDhXxCBX/exec?idToken=${idToken}`;
+          const url = `https://script.google.com/macros/s/AKfycbw3DRKNqo2YlZBjpqVzmWoTB1doyWMJYaT-9xDHgpvYUj1tadlIyoAEnIW7MNDLtSaE/exec?idToken=${idToken}`;
           
           const response = await fetch(url);
           const data = await response.json();
@@ -438,39 +438,64 @@
             `;
         }
 
+        let teacherInfo = []; // Array to hold teacher data with badge and name
+
         modalContent += `
-            <div class="table-responsive"> 
+          <div class="table-responsive"> 
             <table class="table table-bordered">
-                <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Rel.</th>
-                        <th>D.O.B</th>
-                        <th>D.O.M</th>
-                        <th>Blood Grp</th>
-                        <th>Profession</th>
-                        <th>Cell No.</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    ${family.members.map(member => `
-                        <tr>
-                            <td>${member.name}</td>
-                            <td>${member.relationship}</td>
-                            <td>${member.dob}</td>
-                            <td>${member.dom}</td>
-                            <td>${member.bloodgrp}</td>
-                            <td>${member.profession}</td>
-                            <td>${member.contactNumber}</td>
-                        </tr>
-                    `).join('')}
-                </tbody>
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Rel.</th>
+                  <th>D.O.B</th>
+                  <th>D.O.M</th>
+                  <th>Blood Grp</th>
+                  <th>Profession</th>
+                  <th>Cell No.</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${family.members.map(member => {
+                    const isTeacher = member.teacher && member.teacher.length > 5;
+                    const badgeName = isTeacher 
+                      ? `<span class="badge bg-warning text-dark">⭐ ${member.name}</span>` 
+                      : member.name;
+
+                    if (isTeacher) {
+                      teacherInfo.push(`⭐ ${member.name} - ${member.teacher}`);
+                    }
+
+                    return `
+                      <tr>
+                        <td>${badgeName}</td>
+                        <td>${member.relationship}</td>
+                        <td>${member.dob}</td>
+                        <td>${member.dom}</td>
+                        <td>${member.bloodgrp}</td>
+                        <td>${member.profession}</td>
+                        <td>${member.contactNumber}</td>
+                      </tr>
+                    `;
+                }).join('')}
+              </tbody>
             </table>
           </div>
+
           <div class="d-flex justify-content-between mt-3">
-                <div><strong>Previous Parish:</strong> ${prevParish}</div>
-                <div><strong>Previous Diocese:</strong> <i>${prevDiocese}</i></div>
+            <div><strong>Previous Parish:</strong> ${prevParish}</div>
+            <div><strong>Previous Diocese:</strong> <i>${prevDiocese}</i></div>
           </div>
+
+          ${teacherInfo.length > 0 
+            ? `
+                ${teacherInfo.map(info => `
+                  <div class="d-flex justify-content-between mb-2">
+                    <div>${info}</div>
+                  </div>
+                `).join('')}
+              ` 
+            : ''
+          }
         `;
         document.getElementById('family-details-content').innerHTML = modalContent;
         const lightbox = GLightbox({

@@ -458,7 +458,10 @@
                 ${family.members.map(member => {
                     const isTeacher = member.teacher && member.teacher.length > 5;
                     const badgeName = isTeacher 
-                      ? `<span class="badge bg-warning text-dark">⭐ ${member.name}</span>` 
+                      ? `<span title="Teacher" aria-label="Teacher: ${member.name}">
+                          <span style="font-size: 1.2rem; margin-right: 5px;">⭐</span>
+                          ${member.name}
+                        </span>` 
                       : member.name;
 
                     if (isTeacher) {
@@ -489,7 +492,7 @@
           ${teacherInfo.length > 0 
             ? `
                 ${teacherInfo.map(info => `
-                  <div class="d-flex justify-content-between mb-2">
+                  <div class="d-flex justify-content-between mt-3">
                     <div>${info}</div>
                   </div>
                 `).join('')}

@@ -458,8 +458,8 @@
                 ${family.members.map(member => {
                     const isTeacher = member.teacher && member.teacher.length > 5;
                     const badgeName = isTeacher 
-                      ? `<span title="Teacher" aria-label="Teacher: ${member.name}">
-                          <span style="font-size: 1.2rem; margin-right: 5px;">⭐</span>
+                      ? `<span title="Catechism" aria-label="Catechism: ${member.name}">
+                          <span style="font-size: 1.2rem; margin-right: 3px;">⭐</span>
                           ${member.name}
                         </span>` 
                       : member.name;

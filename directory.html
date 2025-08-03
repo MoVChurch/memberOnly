@@ -106,7 +106,7 @@
         </div>
 
        <!-- Toggle between First Name and Family Name Search -->
-        <div class="form-group">
+        <!-- <div class="form-group">
             <label>Search By: &nbsp;&nbsp;</label>
             <div class="form-check form-check-inline">
                 <input class="form-check-input" type="radio" name="searchMode" id="firstNameSearchToggle" value="firstName" checked>
@@ -116,7 +116,7 @@
                 <input class="form-check-input" type="radio" name="searchMode" id="familyNameSearchToggle" value="familyName">
                 <label class="form-check-label" for="familyNameSearchToggle">Family Name</label>
             </div>
-        </div>
+        </div> -->
     
         <!-- Search Bar -->
         <div class="form-group">
@@ -199,6 +199,7 @@
 
   <!-- Main JS File -->
   <script src="assets/js/main.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/fuse.js@7.1.0"></script>
   <!-- Firebase SDKs from CDN (browser version) -->
 <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-auth-compat.js"></script>
@@ -319,38 +320,40 @@
 
     // Function to search by first name or family name based on the toggle selection
     function searchByName() {
-        const searchValue = document.getElementById('searchInput').value.toLowerCase();
-        const searchMode = document.querySelector('input[name="searchMode"]:checked').value;
-        const unitFilter = document.getElementById('unitNameDropdown').value ;
-        
-        if (searchMode === "firstName") {
-           if (unitFilter === "all") {
-              filteredFamilies = families.filter(family =>
-                family.members.some(member => member.name.toLowerCase().includes(searchValue))
-              );
-           }
-           else {
-            filteredFamilies = filteredByUnit.filter(family =>
-                family.members.some(member => member.name.toLowerCase().includes(searchValue))
-              );
-           }
-        } else if (searchMode === "familyName") {
-          if (unitFilter === "all") {
-              filteredFamilies = families.filter(family =>
-                  family.familyName.toLowerCase().includes(searchValue)
-              );
-           }
-           else {
-              filteredFamilies = filteredByUnit.filter(family =>
-                  family.familyName.toLowerCase().includes(searchValue)
-              );
-          }
+        const searchValue = document.getElementById('searchInput').value.trim();
+        const unitFilter = document.getElementById('unitNameDropdown').value;
+
+        // Start with all families
+        let searchPool = families;
+
+        // Apply unit filter if not "all"
+        if (unitFilter !== "all") {
+            searchPool = families.filter(family => family.unitName === unitFilter);
         }
-        
+
+        // If there's a search value, apply fuzzy search using Fuse
+        if (searchValue !== "") {
+            const fuse = new Fuse(searchPool, {
+                keys: [
+                    "familyName",
+                    "address",
+                    "members.name",
+                    "members.contactNumber",
+                ],
+                threshold: 0.3
+            });
+
+            const results = fuse.search(searchValue);
+            filteredFamilies = results.map(result => result.item);
+        } else {
+            filteredFamilies = searchPool; // No search, just unit filter
+        }
+
         currentPage = 1;
         renderPagination(filteredFamilies.length);
         displayFamilies();
     }
+
 
     // Function to display families with pagination
     function displayFamilies(page = 1) {

@@ -340,7 +340,8 @@
                     "members.name",
                     "members.contactNumber",
                 ],
-                threshold: 0.3
+                includeScore: true,
+                threshold: 0.5
             });
 
             const results = fuse.search(searchValue);

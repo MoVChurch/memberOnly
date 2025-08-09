@@ -350,7 +350,7 @@
                         return family.familyName?.toLowerCase().includes(searchValue);
                     case "mobile":
                         return family.members.some(member =>
-                            member.contactNumber?.toLowerCase().includes(searchValue)
+                            member.contactNumber?.toString().includes(searchValue)
                         );
                     case "profession":
                         return family.members.some(member =>

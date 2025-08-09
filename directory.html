@@ -75,54 +75,62 @@
     <section id="starter-section" class="starter-section section">
 
       <div class="container" data-aos="fade-up">
-        <!-- Unit Name Dropdown -->
-        <div class="form-group">
-          <label for="unitNameDropdown">Select <b>Unit Name:</b></label>
-          <select id="unitNameDropdown" class="form-select form-select-lg mb-3" onchange="filterByUnitName()">
-              <option value="St. Kuriakose Elias Chavara">St. Chavara</option>
-              <option value="St. Mother Theresa">St. Mother Theresa</option>
-              <option value="Holy Cross">Holy Cross</option>
-              <option value="Holy Family">Holy Family</option>
-              <option value="Infant Jesus" selected>Infant Jesus</option>
-              <option value="all">--- All Units ---</option>
-              <option value="Little Flower">Little Flower</option>
-              <option value="Our Lady of Perpetual Succour">OLPS (Our Lady of Perpetual Succour)</option>
-              <option value="Our Lady of Lourdes">OLL (Our Lady of Lourdes)</option>
-              <option value="St. Alphonsa">St. Alphonsa</option>
-              <option value="St. Antony">St. Antony</option>
-              <option value="St. Francis Assissi">St. Francis Assissi</option>
-              <option value="St. George">St. George</option>
-              <option value="St. Joseph">St. Joseph</option>
-              <option value="St. John">St. John</option>
-              <option value="St. Jude">St. Jude</option>
-              <option value="St. Mary’s">St. Mary</option>
-              <option value="St. Maria Goretti">St. Maria Goretti</option>
-              <option value="St. Paul">St. Paul</option>
-              <option value="St. Sebastian">St. Sebastian</option>
-              <option value="St. Thomas">St. Thomas</option>
-              <option value="Sacred Heart">Sacred Heart</option>
-              <option value="St. Peter">St. Peter</option>
-          </select>
-        </div>
+       
+          <!-- Control Panel Card -->
+          <div class="p-4 bg-light rounded shadow-sm mb-4">
+              <div class="row g-3 align-items-center">
 
-       <!-- Toggle between First Name and Family Name Search -->
-        <!-- <div class="form-group">
-            <label>Search By: &nbsp;&nbsp;</label>
-            <div class="form-check form-check-inline">
-                <input class="form-check-input" type="radio" name="searchMode" id="firstNameSearchToggle" value="firstName" checked>
-                <label class="form-check-label" for="firstNameSearchToggle">First Name</label>
-            </div>
-            <div class="form-check form-check-inline">
-                <input class="form-check-input" type="radio" name="searchMode" id="familyNameSearchToggle" value="familyName">
-                <label class="form-check-label" for="familyNameSearchToggle">Family Name</label>
-            </div>
-        </div> -->
-    
-        <!-- Search Bar -->
-        <div class="form-group">
-            <input type="text" id="searchInput" class="form-control" placeholder="Search..." oninput="searchByName()">
-        </div>
+                <!-- Unit Dropdown -->
+                <div class="col-12 col-md-4">
+                  <label for="unitNameDropdown" class="form-label fw-bold visually-hidden">Filter UnitName</label>
+                  <select id="unitNameDropdown" class="form-select form-select" onchange="filterByUnitName()">
+                    <option value="Infant Jesus">Infant Jesus</option>
+                    <option value="St. Kuriakose Elias Chavara" selected>St. Chavara</option>
+                    <option value="St. Mother Theresa">St. Mother Theresa</option>
+                    <option value="Holy Cross">Holy Cross</option>
+                    <option value="Holy Family">Holy Family</option>
+                    <option value="all">--- All Units ---</option>
+                    <option value="Little Flower">Little Flower</option>
+                    <option value="Our Lady of Perpetual Succour">OLPS (Our Lady of Perpetual Succour)</option>
+                    <option value="Our Lady of Lourdes">OLL (Our Lady of Lourdes)</option>
+                    <option value="St. Alphonsa">St. Alphonsa</option>
+                    <option value="St. Antony">St. Antony</option>
+                    <option value="St. Francis Assissi">St. Francis Assissi</option>
+                    <option value="St. George">St. George</option>
+                    <option value="St. Joseph">St. Joseph</option>
+                    <option value="St. John">St. John</option>
+                    <option value="St. Jude">St. Jude</option>
+                    <option value="St. Mary’s">St. Mary</option>
+                    <option value="St. Maria Goretti">St. Maria Goretti</option>
+                    <option value="St. Paul">St. Paul</option>
+                    <option value="St. Sebastian">St. Sebastian</option>
+                    <option value="St. Thomas">St. Thomas</option>
+                    <option value="Sacred Heart">Sacred Heart</option>
+                    <option value="St. Peter">St. Peter</option>
+                  </select>
+                </div>
 
+                <!-- Search Type Dropdown -->
+                <div class="col-12 col-md-3">
+                  <label for="searchField" class="form-label fw-bold visually-hidden">Search By</label>
+                  <select id="searchField" class="form-select" onchange="updateSearchPlaceholder()">
+                    <option value="name">🔍 Member Name</option>
+                    <option value="familyName">🔍 Family Name</option>
+                    <option value="bloodGroup">🔍 Blood Group</option>
+                    <option value="profession">🔍 Profession</option>
+                    <option value="mobile">🔍 Mobile</option>
+                    <option value="address">🔍 Address</option>
+                  </select>
+                </div>
+
+                <!-- Search Input -->
+                <div class="col-12 col-md-5">
+                  <label for="searchInput" class="form-label fw-bold visually-hidden">Search</label>
+                  <input type="text" id="searchInput" class="form-control" placeholder="Search..." oninput="performSearch()">
+                </div>
+
+              </div> <!-- /.row -->
+          </div> <!-- /.control-panel -->
       </div><!-- /End of Container -->
 
        <!-- Loading Spinner -->
@@ -199,7 +207,6 @@
 
   <!-- Main JS File -->
   <script src="assets/js/main.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/fuse.js@7.1.0"></script>
   <!-- Firebase SDKs from CDN (browser version) -->
 <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-auth-compat.js"></script>
@@ -210,6 +217,7 @@
     let filteredByUnit = [];
     const itemsPerPage = 10;
     let currentPage = 1;
+    document.addEventListener("DOMContentLoaded", updateSearchPlaceholder);
 
     // Function to show the loading spinner
     function showLoading() {
@@ -318,41 +326,65 @@
         displayFamilies();
     }
 
-    // Function to search by first name or family name based on the toggle selection
-    function searchByName() {
-        const searchValue = document.getElementById('searchInput').value.trim();
+    function performSearch() {
+        const searchValue = document.getElementById('searchInput').value.trim().toLowerCase();
+        const searchField = document.getElementById('searchField').value;
         const unitFilter = document.getElementById('unitNameDropdown').value;
 
-        // Start with all families
-        let searchPool = families;
+        // Filter by unit first
+        let baseFamilies = unitFilter === "all"
+            ? families
+            : families.filter(family => family.unitName === unitFilter);
 
-        // Apply unit filter if not "all"
-        if (unitFilter !== "all") {
-            searchPool = families.filter(family => family.unitName === unitFilter);
-        }
-
-        // If there's a search value, apply fuzzy search using Fuse
-        if (searchValue !== "") {
-            const fuse = new Fuse(searchPool, {
-                keys: [
-                    "familyName",
-                    "address",
-                    "members.name",
-                    "members.contactNumber",
-                ],
-                includeScore: true,
-                threshold: 0.5
-            });
-
-            const results = fuse.search(searchValue);
-            filteredFamilies = results.map(result => result.item);
+        // If no search term, return unit-filtered results
+        if (searchValue === "") {
+            filteredFamilies = baseFamilies;
         } else {
-            filteredFamilies = searchPool; // No search, just unit filter
+            filteredFamilies = baseFamilies.filter(family => {
+                switch (searchField) {
+                    case "name":
+                        return family.members.some(member =>
+                            member.name?.toLowerCase().includes(searchValue)
+                        );
+                    case "familyName":
+                        return family.familyName?.toLowerCase().includes(searchValue);
+                    case "mobile":
+                        return family.members.some(member =>
+                            member.contactNumber?.toLowerCase().includes(searchValue)
+                        );
+                    case "profession":
+                        return family.members.some(member =>
+                            member.profession?.toLowerCase().includes(searchValue)
+                        );
+                    case "bloodGroup":
+                        return family.members.some(member =>
+                            member.bloodgrp?.toLowerCase().includes(searchValue)
+                        );
+                    case "address":
+                        return family.address?.toLowerCase().includes(searchValue);
+                    default:
+                        return false;
+                }
+            });
         }
 
         currentPage = 1;
         renderPagination(filteredFamilies.length);
         displayFamilies();
+    }
+
+    function updateSearchPlaceholder() {
+      const field = document.getElementById('searchField').value;
+      const input = document.getElementById('searchInput');
+      const labelMap = {
+        name: "Member Name",
+        familyName: "Family Name",
+        address: "Address",
+        mobile: "Mobile Number",
+        bloodGroup: "Blood Group",
+        profession: "Profession"
+      };
+      input.placeholder = `Search by ${labelMap[field] || 'Keyword'}...`;
     }
 
 
@@ -421,6 +453,9 @@
     function showFamilyDetails(familyIndex) {
         const family = filteredFamilies[familyIndex];
         const ageText = formatMovAge(family.mov_age);
+        const ageHtml = ageText === 'Not Available'
+              ? `<span style="color: red;">${ageText}</span>`
+              : `<span>${ageText}</span>`;
         const photo = family.familyPhoto;
         const prevParish = family.prevParish;
         const prevDiocese = family.prevDiocese;
@@ -438,7 +473,7 @@
                 <div class="d-flex justify-content-between mb-2">
                   <div><strong>Family Photo:</strong> <a href="${photo}" class="glightbox" data-type="image">
                       Click to view Photo</a></div>
-                  <div><strong>MoV Joining:</strong> ${ageText}</div>
+                  <div><strong>MoV Joining:</strong> ${ageHtml}</div>
                 </div>
             `;
         }

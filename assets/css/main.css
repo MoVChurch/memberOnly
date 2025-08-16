@@ -929,9 +929,9 @@ section,
 --------------------------------------------------------------*/
 .hero {
   width: 100%;
-  min-height: 70vh;
+  min-height: 10vh;
   position: relative;
-  padding: 180px 0 40px 0;
+  padding: 120px 0 20px 0;  /* reduced top and bottom padding */
   display: flex;
   align-items: center;
   overflow: hidden;
@@ -1044,6 +1044,14 @@ section,
   .hero .btn-watch-video {
     font-size: 13px;
   }
+}
+
+.hover-card {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.hover-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.15);
 }
 
 /*--------------------------------------------------------------

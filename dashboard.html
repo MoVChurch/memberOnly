@@ -175,7 +175,43 @@
   <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-auth-compat.js"></script>
 
- 
+  <script>
+      // Firebase configuration
+      const firebaseConfig = {
+          apiKey: "AIzaSyCOboG8dsoh6MSW3lL_9pY9pB1kUJ35e7U",
+          authDomain: "movchurch-400610.firebaseapp.com",
+          projectId: "movchurch-400610",
+          appId: "1:1088970662172:web:c57adb76c641b1a3749ad9"
+      };
+      firebase.initializeApp(firebaseConfig);
+      const auth = firebase.auth();
+      const welcomeMessage = document.getElementById('welcome-message');
+
+      // Check if the user is authenticated
+      auth.onAuthStateChanged(user => {
+          if (!user) {
+              // If no user is logged in, redirect to login page
+              window.location.href = 'index.html';
+              return;
+          }
+          // If the user is logged in, show the dashboard content
+          // You can also retrieve user details if necessary (user.displayName, user.email)
+          
+          const userName = user.displayName || user.email; // Use displayName if available, else fallback to email
+          //Store email for use in directory.html
+          localStorage.setItem("userEmail", user.email);
+          welcomeMessage.textContent = `Welcomes ${userName}`;
+      });
+       // Logout function
+    function logout() {
+      auth.signOut()
+        .then(() => {
+          localStorage.removeItem("userEmail");
+          window.location.href = 'index.html';
+        })
+        .catch(err => console.error('Logout error:', err));
+    }
+  </script>
 
 </body>
 

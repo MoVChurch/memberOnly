@@ -269,7 +269,7 @@
             return;
           }
            // No cache found, fetch from Google Apps Script
-          const url = `https://script.google.com/macros/s/AKfycbw3DRKNqo2YlZBjpqVzmWoTB1doyWMJYaT-9xDHgpvYUj1tadlIyoAEnIW7MNDLtSaE/exec?idToken=${idToken}`;
+          const url = `https://script.google.com/macros/s/AKfycbxWaY5Us2p0G54tQqlGxpRwFFBnvSPpcrQIN8KfjXbGXreVC_xEPmdLgQ_2EhF9u3xO/exec?idToken=${idToken}`;
           
           const response = await fetch(url);
           const data = await response.json();
@@ -457,6 +457,7 @@
               ? `<span style="color: red;">${ageText}</span>`
               : `<span>${ageText}</span>`;
         const photo = family.familyPhoto;
+        const parishManualRegNum = family.regNum;
         const prevParish = family.prevParish;
         const prevDiocese = family.prevDiocese;
         
@@ -471,8 +472,9 @@
         if (photo && photo.startsWith("https://res.cloudinary.com/")) {
             modalContent += `
                 <div class="d-flex justify-content-between mb-2">
-                  <div><strong>Family Photo:</strong> <a href="${photo}" class="glightbox" data-type="image">
-                      Click to view Photo</a></div>
+                  <div><a href="${photo}" class="glightbox" data-type="image">
+                      <strong>Family Photo</strong></a></div>
+                  <div><strong>Reg. Num:</strong> ${parishManualRegNum}</div>    
                   <div><strong>MoV Joining:</strong> ${ageHtml}</div>
                 </div>
             `;

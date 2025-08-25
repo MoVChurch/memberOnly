@@ -163,7 +163,7 @@
             showFamilyDetails(data.myDetails[0]);
           } else {
             document.getElementById('family-details-content').innerHTML = `
-              <div class="alert alert-warning text-center">Your Family data not found. Please visit Achan's office with your Parish Book to complete your registration in Eden.</div>`;
+              <div class="alert alert-warning text-center">Your Family data not found. Please visit Achan's office with your Parish Book to complete your registration in EDEN.</div>`;
           }
           hideLoading();
           return;
@@ -181,7 +181,7 @@
     async function fetchMemberData(idToken) {
       showLoading();
 
-      const url = `https://script.google.com/macros/s/AKfycbzoZLFDHOgGBPK93-sBBvEd8Qm0Vb1t_oQfwPpz6H23iBvYKE4bs5VB_l-FGTiW7fTD/exec?idToken=${idToken}`;
+      const url = `https://script.google.com/macros/s/AKfycbxWaY5Us2p0G54tQqlGxpRwFFBnvSPpcrQIN8KfjXbGXreVC_xEPmdLgQ_2EhF9u3xO/exec?idToken=${idToken}`;
 
       try {
         const response = await fetch(url);
@@ -257,7 +257,7 @@
             html += `
                 <p><strong>Family Photo: </strong>
                   <a href="${photo}" class="glightbox" data-type="image">
-                      Click here to view the Family Photo
+                      Click to view Photo
                   </a>
                 </p>
             `;

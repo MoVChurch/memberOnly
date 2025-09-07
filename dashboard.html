@@ -76,74 +76,90 @@
     <section id="dashboard" class="dashboard section py-5">
       <div class="container">
 
-          <!-- Row 1: Actions -->
-           <div class="row g-4 justify-content-center mb-4">
-            <!-- Family Directory -->
-            <div class="col-md-6 col-lg-6">
-              <div class="card shadow-lg border-0 rounded-4 h-100 text-center hover-card">
-                <div class="card-body p-4 d-flex flex-column align-items-center justify-content-center">
-                  <div class="icon mb-3">
-                    <i class="bi bi-journal-bookmark-fill text-info" style="font-size: 2.5rem;"></i>
-                  </div>
-                  <h5 class="card-title fw-bold">MoV Directory</h5>
-                  <p class="text-muted small">Explore all registered families</p>
-                  <a href="directory.html" class="btn btn-info rounded-pill px-4 mt-2">
-                    Go <i class="bi bi-arrow-right-circle ms-2"></i>
-                  </a>
+        <!-- Row 1: Actions -->
+        <div class="row g-4 justify-content-center mb-4">
+          <!-- Family Directory -->
+          <div class="col-md-6 col-lg-6">
+            <div class="card shadow-lg border-0 rounded-4 h-100 text-center hover-card">
+              <div class="card-body p-4 d-flex flex-column align-items-center justify-content-center">
+                <div class="icon mb-3">
+                  <i class="bi bi-journal-bookmark-fill text-info" style="font-size: 2.5rem;"></i>
                 </div>
-              </div>
-            </div>
-
-            <!-- My Details -->
-            <div class="col-md-6 col-lg-6">
-              <div class="card shadow-lg border-0 rounded-4 h-100 text-center hover-card">
-                <div class="card-body p-4 d-flex flex-column align-items-center justify-content-center">
-                  <div class="icon mb-3">
-                    <i class="bi bi-person-badge-fill text-warning" style="font-size: 2.5rem;"></i>
-                  </div>
-                  <h5 class="card-title fw-bold">My Family</h5>
-                  <p class="text-muted small">View only your family details</p>
-                  <a href="member.html" class="btn btn-warning rounded-pill px-4 mt-2">
-                    Open <i class="bi bi-arrow-right-circle ms-2"></i>
-                  </a>
-                </div>
+                <h5 class="card-title fw-bold">MoV Directory</h5>
+                <p class="text-muted small">Explore all registered families</p>
+                <a href="directory.html" class="btn btn-info rounded-pill px-4 mt-2">
+                  Go <i class="bi bi-arrow-right-circle ms-2"></i>
+                </a>
               </div>
             </div>
           </div>
 
-          <!-- Row 2: Stats -->
-          <div class="row g-4 justify-content-center">
-            <!-- Total Families Card -->
-            <div class="col-md-6 col-lg-6">
-              <div class="card shadow-lg border-0 rounded-4 h-100 hover-card">
-                <div class="card-body text-center p-4">
-                  <div class="icon mb-3">
-                    <i class="bi bi-house-heart-fill text-primary" style="font-size: 2.5rem;"></i>
-                  </div>
-                  <h5 class="card-title fw-bold">Total Families</h5>
-                  <h2 class="display-5 fw-bold text-primary" id="total-families">412</h2>
-                  <p class="text-muted mb-0">Registered Families</p>
+          <!-- My Details -->
+          <div class="col-md-6 col-lg-6">
+            <div class="card shadow-lg border-0 rounded-4 h-100 text-center hover-card">
+              <div class="card-body p-4 d-flex flex-column align-items-center justify-content-center">
+                <div class="icon mb-3">
+                  <i class="bi bi-person-badge-fill text-warning" style="font-size: 2.5rem;"></i>
                 </div>
-              </div>
-            </div>
-
-            <!-- Total Members Card -->
-            <div class="col-md-6 col-lg-6">
-              <div class="card shadow-lg border-0 rounded-4 h-100 hover-card">
-                <div class="card-body text-center p-4">
-                  <div class="icon mb-3">
-                    <i class="bi bi-people-fill text-success" style="font-size: 2.5rem;"></i>
-                  </div>
-                  <h5 class="card-title fw-bold">Total Members</h5>
-                  <h2 class="display-5 fw-bold text-success" id="total-members">1,896</h2>
-                  <p class="text-muted mb-0">Individuals in the Parish</p>
-                </div>
+                <h5 class="card-title fw-bold">My Family</h5>
+                <p class="text-muted small">View only your family details</p>
+                <a href="member.html" class="btn btn-warning rounded-pill px-4 mt-2">
+                  Open <i class="bi bi-arrow-right-circle ms-2"></i>
+                </a>
               </div>
             </div>
           </div>
+        </div>
+
+        <!-- Row 2: Total Families -->
+        <div class="row g-4 justify-content-center mb-4">
+          <!-- Total Families Card -->
+          <div class="col-md-6 col-lg-6">
+            <div class="card shadow-lg border-0 rounded-4 h-100 hover-card">
+              <div class="card-body text-center p-4">
+                <div class="icon mb-3">
+                  <i class="bi bi-house-heart-fill text-primary" style="font-size: 2.5rem;"></i>
+                </div>
+                <h5 class="card-title fw-bold">Total Families</h5>
+                <h2 class="display-5 fw-bold text-primary" id="total-families">412</h2>
+                <p class="text-muted mb-0">Registered Families</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Total Members Card -->
+          <div class="col-md-6 col-lg-6">
+            <div class="card shadow-lg border-0 rounded-4 h-100 hover-card">
+              <div class="card-body text-center p-4">
+                <div class="icon mb-3">
+                  <i class="bi bi-people-fill text-success" style="font-size: 2.5rem;"></i>
+                </div>
+                <h5 class="card-title fw-bold">Total Members</h5>
+                <h2 class="display-5 fw-bold text-success" id="total-members">1,896</h2>
+                <p class="text-muted mb-0">Individuals in the Parish</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Row 3: Vocation -->
+        <div class="row g-4 justify-content-center">
+          <!-- Vocation Card -->
+          <div class="col-md-6 col-lg-6">
+            <div class="card shadow-lg border-0 rounded-4 h-100 hover-card">
+              <div class="card-body text-center p-4">
+               <div class="icon mb-3" style="font-size: 2.5rem;">✝️</div>
+                <h5 class="card-title fw-bold">Vocation</h5>
+                <h2 class="display-5 fw-bold text-danger">3</h2>
+                <p class="text-muted mb-0">2 Priest, 1 Nun</p>
+              </div>
+            </div>
+          </div>
+        </div>
 
       </div>
     </section>
+
           
   </main>
 

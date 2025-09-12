@@ -211,13 +211,7 @@
 <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-auth-compat.js"></script>
 <script src="https://apis.google.com/js/api.js"></script>
-<script src="assets/js/crypto.js"></script>
 <script>
-    // Uses cryptoStore.js for encryption/decryption.
-    // Loads decrypted cache first; falls back to fetch.
-    // Saves encrypted data in localStorage.
-    // Leaves cache intact on logout.
-    
     let families = [];
     let filteredFamilies = [];
     let filteredByUnit = [];
@@ -264,17 +258,18 @@
 
       showLoading();
       try {
-          // Try loading encrypted families data from localStorage
-          const cached = await loadDecrypted(user.email);
-          if (cached) {
-            families = cached.families;
-            filterByUnitName();   // Proceed with UI rendering
+
+          // Check if families data exists in sessionStorage
+          const cachedData = sessionStorage.getItem('familiesData');
+          if (cachedData) {
+            const parsedData = JSON.parse(cachedData);
+            families = parsedData.families;
+            filterByUnitName();  // Proceed with UI rendering
             hideLoading();
             return;
           }
-       
            // No cache found, fetch from Google Apps Script
-          const url = `https://script.google.com/macros/s/AKfycbyPR3Q50V1o0QU6ePieoPtb87U5wKcJV6zzSGAzL23enOS7Vc1Iw4f1vd9V3FZN4gpN/exec?idToken=${idToken}`;
+          const url = `https://script.google.com/macros/s/AKfycbxWaY5Us2p0G54tQqlGxpRwFFBnvSPpcrQIN8KfjXbGXreVC_xEPmdLgQ_2EhF9u3xO/exec?idToken=${idToken}`;
           
           const response = await fetch(url);
           const data = await response.json();
@@ -296,8 +291,8 @@
             return;
           }
           else{
-            // Save encrypted for future logins
-            await saveEncrypted(user.email, data);
+            // Store fetched families in sessionStorage
+            sessionStorage.setItem('familiesData', JSON.stringify(data));
             
             families = data.families;
             filterByUnitName();
@@ -586,7 +581,7 @@
       auth.signOut()
         .then(() => {
           localStorage.removeItem("userEmail");
-          //sessionStorage.removeItem("familiesData");  // Clear cache on logout
+          sessionStorage.removeItem("familiesData");  // Clear cache on logout
           window.location.href = 'index.html';
         })
         .catch(err => console.error('Logout error:', err));

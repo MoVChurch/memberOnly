@@ -168,7 +168,7 @@
   <!-- Firebase SDKs from CDN (browser version) -->
   <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-auth-compat.js"></script>
-  <script src="assets/js/crypto.js"></script>
+
   <script>
       
       let birthdayList = [];
@@ -205,19 +205,21 @@
         try {
           const idToken = await user.getIdToken();
 
-          // Try to load cached & decrypted data
-          const cachedOccasions = await loadDecrypted(user.email + "_occasions");
-          if (cachedOccasions) {
-            birthdayList = cachedOccasions.birthdays || [];
-            anniversaryList = cachedOccasions.anniversaries || [];
-            fillDataTable(document.getElementById('data-selector').value);
-            hideLoading();
-            return;
+          // Check for cached data
+          const cachedBirthdays = sessionStorage.getItem('birthdayList');
+          const cachedAnniversaries = sessionStorage.getItem('anniversaryList');
 
-          } 
-          
-        fetchOccasionData(idToken, user.email); // Otherwise fetch fresh
-      
+          if (cachedBirthdays && cachedAnniversaries) {
+            birthdayList = JSON.parse(cachedBirthdays);
+            anniversaryList = JSON.parse(cachedAnniversaries);
+            const occasion = document.getElementById('data-selector').value;
+            fillDataTable(occasion);
+            // Hide spinner
+            document.getElementById('loadingMessage').style.display = 'none';
+
+          } else {
+            fetchOccasionData(idToken);
+          }
         } catch (err) {
           console.error("Token error:", err);
           alert("Unable to verify user. Please try logging in again.");
@@ -225,36 +227,34 @@
         }
       });
 
-      async function fetchOccasionData(idToken, userKey) {
+      async function fetchOccasionData(idToken) {
         try {
-          showLoading();
+          // Show loading spinner
+          document.getElementById('loadingMessage').style.display = 'block';
           
-          const url = `https://script.google.com/macros/s/AKfycbyPR3Q50V1o0QU6ePieoPtb87U5wKcJV6zzSGAzL23enOS7Vc1Iw4f1vd9V3FZN4gpN/exec?idToken=${idToken}&section=celeb`;
+          const url = `https://script.google.com/macros/s/AKfycbxwcm-GuZRZckXiiZJQUTcGWjJGYTFOdLR3QzleM1hqzvYJU2IE91gj7YIHjDhXxCBX/exec?idToken=${idToken}&section=celeb`;
           const response = await fetch(url);
           const data = await response.json();
 
           // Validate and process data
           if (Array.isArray(data.birthdays)) {
             birthdayList = data.birthdays;
+            sessionStorage.setItem('birthdayList', JSON.stringify(birthdayList));
           }
 
           if (Array.isArray(data.anniversaries)) {
             anniversaryList = data.anniversaries;
+            sessionStorage.setItem('anniversaryList', JSON.stringify(anniversaryList));
           }
 
-          // Save encrypted bundle
-          await saveEncrypted(userKey + "_occasions", {
-            birthdays: birthdayList,
-            anniversaries: anniversaryList
-          });
-
-          fillDataTable(document.getElementById('data-selector').value);
-
+          const occasion = document.getElementById('data-selector').value;
+          fillDataTable(occasion);
         } catch (err) {
           console.error('Fetch error:', err);
           alert("Unable to fetch occasion data. Please try again later.");
         } finally {
-          hideLoading();
+          // Hide loading spinner regardless of success or error
+          document.getElementById('loadingMessage').style.display = 'none';
         }
       }
 
@@ -291,6 +291,8 @@
 
       function logout() {
         auth.signOut().then(() => {
+          sessionStorage.removeItem('birthdayList');
+          sessionStorage.removeItem('anniversaryList');
           window.location.href = 'index.html';
         }).catch(error => {
           console.error('Logout error:', error);

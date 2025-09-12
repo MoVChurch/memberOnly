@@ -75,6 +75,11 @@
 
     <section id="dashboard" class="dashboard section py-5">
       <div class="container">
+        <blockquote class="blockquote bg-dark text-white border-start border-3 ps-3 py-3 px-4 rounded">
+          <p class="mb-1">Note on Profession column.</p>
+          <p>"Service, Retired, Student, HomeMaker, Self-Employed" will not be printed as these are common</p>
+          <p>Mention the Category of your Service/Business. If you describe your area of work, we can generalize and shorten it in 2 or 3 words.</p>
+        </blockquote>
 
         <!-- Row 1: Actions -->
         <div class="row g-4 justify-content-center mb-4">
@@ -203,6 +208,33 @@
       const auth = firebase.auth();
       const welcomeMessage = document.getElementById('welcome-message');
 
+      // Version check endpoint (lightweight)
+      const versionUrl = "https://script.google.com/macros/s/AKfycbyMGELexlHVDyi7ehrmhWOMH3KbS8h7acBRpkr1YY2FWbUDRCrT_T5HXsrWCvV3HlbJ/exec";
+
+      // Compare cached version vs server version
+      async function checkVersionAndUpdateCache(userKey) {
+        try {
+          const resp = await fetch(versionUrl);
+          const { version: serverVersion } = await resp.json();
+
+          const cachedDataEnc = localStorage.getItem("familiesDataEnc");
+          if (!cachedDataEnc) return; // no cache stored
+
+          const cached = await loadDecrypted(userKey);
+          if (!cached) return; // decryption failed, let directory page handle fetch
+
+          if (cached.version !== serverVersion) {
+            console.log("Cache is outdated. Clearing localStorage.");
+            localStorage.removeItem("familiesDataEnc");
+          } else {
+            console.log("Cache is valid, version:", cached.version);
+          }
+        } catch (err) {
+          console.error("Version check failed:", err);
+        }
+      }
+
+
       // Check if the user is authenticated
       auth.onAuthStateChanged(user => {
           if (!user) {
@@ -217,7 +249,9 @@
           //Store email for use in directory.html
           localStorage.setItem("userEmail", user.email);
           welcomeMessage.textContent = `Welcomes ${userName}`;
+          checkVersionAndUpdateCache(user.email); // Run version check after login
       });
+      
        // Logout function
     function logout() {
       auth.signOut()

@@ -149,7 +149,7 @@
             <div class="card shadow-lg border-0 rounded-4 h-100 hover-card">
               <div class="card-body text-center p-4">
                <div class="icon mb-3" style="font-size: 2.5rem;">✝️</div>
-                <h5 class="card-title fw-bold">Vocation</h5>
+                <h5 class="card-title fw-bold">MoV Vocation</h5>
                 <h2 class="display-5 fw-bold text-danger">3</h2>
                 <p class="text-muted mb-0">2 Priest, 1 Nun</p>
               </div>
@@ -221,6 +221,7 @@
           if (cached.version !== serverVersion) {
             console.log("Cache is outdated. Clearing cache.");
             localStorage.removeItem(userKey);
+            localStorage.removeItem(`${userKey}_occasions`);
           } else {
             console.log("Cache is valid, version:", cached.version);
           }

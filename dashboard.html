@@ -190,7 +190,7 @@
   <!-- Firebase SDKs from CDN (browser version) -->
   <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-auth-compat.js"></script>
-
+  <script src="assets/js/crypto.js"></script>
   <script>
       // Firebase configuration
       const firebaseConfig = {
@@ -202,6 +202,32 @@
       firebase.initializeApp(firebaseConfig);
       const auth = firebase.auth();
       const welcomeMessage = document.getElementById('welcome-message');
+
+      // Version check endpoint (lightweight)
+      const versionUrl = "https://script.google.com/macros/s/AKfycbxVHp52MZ4L37_9vHBOwVi2V4I7VTs8BN5qxnjWxyS6ya0hFQnOsi4Nr147lSXZ67u0/exec";
+
+      // Compare cached version vs server version
+      async function checkVersionAndUpdateCache(userKey) {
+        try {
+          const resp = await fetch(versionUrl);
+          const { version: serverVersion } = await resp.json();
+
+          const cachedDataEnc = localStorage.getItem(userKey);
+          if (!cachedDataEnc) return; // no cache stored
+
+          const cached = await loadDecrypted(userKey);
+          if (!cached) return; // decryption failed, let directory page handle fetch
+          
+          if (cached.version !== serverVersion) {
+            console.log("Cache is outdated. Clearing cache.");
+            localStorage.removeItem(userKey);
+          } else {
+            console.log("Cache is valid, version:", cached.version);
+          }
+        } catch (err) {
+          console.error("Version GAS check failed:", err);
+        }
+      }
 
       // Check if the user is authenticated
       auth.onAuthStateChanged(user => {
@@ -217,7 +243,9 @@
           //Store email for use in directory.html
           localStorage.setItem("userEmail", user.email);
           welcomeMessage.textContent = `Welcomes ${userName}`;
+          checkVersionAndUpdateCache(user.email); // Run version check after login
       });
+      
        // Logout function
     function logout() {
       auth.signOut()

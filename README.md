@@ -38,10 +38,11 @@ This allows admins to later review and approve or reject access requests.
 ---
 
 ### ✅ **Things That Are Working Well**
-- **Secure by default**: No whitelist, no access. Encrypted local storage.
+- **Secure by default**: No whitelist, no access. Encrypted local storage.  
+We ensure data confidentiality both while being transferred from Google Sheets via HTTPS and while stored locally in the browser using AES-GCM.
 - **Noindex/nofollow**: Page stays off search engines.
 - **Polished UI**: The login screen is clean and styled nicely.
-- **Dynamic control**: Google Sheets makes it easy to manage whitelisted emails.
+- **Dynamic control**: Google Sheets makes it easy to manage whitelisted emails and the core directory data.
 
 ---
 

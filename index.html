@@ -32,7 +32,7 @@
         <!-- Loading Spinner + Message -->
         <div id="loading" class="loading-area" style="display: none;">
           <div class="spinner"></div>
-          <p>Please wait... verifying your access</p>
+          <p>Verifying your access</p>
         </div>
   
       </div>        
@@ -119,6 +119,7 @@
                   //statusEl.innerHTML = `Welcome, ${user.displayName}! Redirecting...`;
                   // Store the token temporarily for next page (cleared on tab close)
                   sessionStorage.setItem('idToken', idToken);
+                  localStorage.setItem('masterDataVersion', data.dirdata_version);
                   setTimeout(() => {
                     window.location.href = 'dashboard.html';
                   }, 1000);
